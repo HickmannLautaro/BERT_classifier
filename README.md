@@ -49,11 +49,13 @@ Amount of appearances for Cat1:
  * Maximal: toys games appears 10266 times  
  * in average 6666.67 times.  
  
+ 
 Amount of appearances for Cat2: 
  * unique values 64  
  * Minimal: small animals appears 29 times  
  * Maximal: personal care appears 2852 times  
  * in average 625.00 times.  
+ 
  
 Amount of appearances for Cat3: 
  * unique values 464  
@@ -69,11 +71,13 @@ Amount of appearances for Cat1:
  * Maximal: health personal care appears 2992 times  
  * in average 1666.67 times.  
  
+ 
 Amount of appearances for Cat2: 
  * unique values 64  
  * Minimal: baby food appears 2 times  
  * Maximal: nutrition wellness appears 904 times  
  * in average 156.25 times.  
+ 
  
 Amount of appearances for Cat3: 
  * unique values 377  
