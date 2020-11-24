@@ -35,4 +35,48 @@ Input is allways a String, either only "Text" or if specified the categorie labe
 
 
 ## Data token length distribution
+### Training data
 ![Data_distribution](./visualizations/Data_analysis.svg)
+### Test data
+![Data_distribution](./visualizations/Data_analysis_test.svg)
+
+
+## Labels statistics
+### Training data
+Amount of appearances for Cat1: 
+ * unique values 6  
+ * Minimal: grocery gourmet food appears 3617 times  
+ * Maximal: toys games appears 10266 times  
+ * in average 6666.67 times.  
+ 
+Amount of appearances for Cat2: 
+ * unique values 64  
+ * Minimal: small animals appears 29 times  
+ * Maximal: personal care appears 2852 times  
+ * in average 625.00 times.  
+ 
+Amount of appearances for Cat3: 
+ * unique values 464  
+ * Minimal: aprons smocks appears 1 times  
+ * Maximal: unknown appears 2262 times  
+ * in average 86.21 times.  
+ 
+ 
+### Test data
+Amount of appearances for Cat1: 
+ * unique values 6  
+ * Minimal: baby products appears 698 times  
+ * Maximal: health personal care appears 2992 times  
+ * in average 1666.67 times.  
+ 
+Amount of appearances for Cat2: 
+ * unique values 64  
+ * Minimal: baby food appears 2 times  
+ * Maximal: nutrition wellness appears 904 times  
+ * in average 156.25 times.  
+ 
+Amount of appearances for Cat3: 
+ * unique values 377  
+ * Minimal: aquarium hoods appears 1 times  
+ * Maximal: vitamins supplements appears 665 times  
+ * in average 26.53 times.  
