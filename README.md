@@ -23,6 +23,7 @@ Input is allways a String, either only "Text" or if specified the categorie labe
 |:---|:----------------------|:--------------------------------|:-----------------|:------------|:-------------|:------------
 |0 | Classifier_multi_2Cat | Text                            | Cat1, Cat2       |0.8223     | 0.5404     | -
 |1 | Classifier_multi_3Cat | Text                            | Cat1, Cat2, Cat3 |0.8203     | 0.5192     | 0
+|1.2| Classifier_multi_3Cat 10 epochs | Text                            | Cat1, Cat2, Cat3 |0.824     | 0.5532     | 0.0026
 |2 | Classifier_lvl1       | Text                            | Cat1             |0.8242     | -          | -
 |3 | Classifier_lvl2_f     | Text                            | Cat2             |-          | 0.5879     | -
 |4 | Classifier_lvl2_h     | Cat1. Text                      | Cat2             |-          | 0.6670     | -
