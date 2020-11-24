@@ -84,3 +84,10 @@ Amount of appearances for Cat3:
  * Minimal: aquarium hoods appears 1 times  
  * Maximal: vitamins supplements appears 665 times  
  * in average 26.53 times.  
+
+---
+
+[Based on](https://towardsdatascience.com/multi-label-multi-class-text-classification-with-bert-transformer-and-keras-c6355eccb63a)  
+[Pretrained models](https://huggingface.co/transformers/pretrained_models.html)  
+[BERT docu](https://huggingface.co/transformers/model_doc/bert.html)  
+[Hierarchical text classification](https://www.kaggle.com/kashnitsky/hierarchical-text-classification)
