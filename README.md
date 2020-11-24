@@ -12,7 +12,7 @@ Each document contains: Title, Text, Cat1, Cat2, Cat3
 ### All at once
 ![all_classses](./visualizations/3clases.svg)
 ### Hierarchical
-![all_classses](./visualizations/hierarchical.svg)
+![hierarchical](./visualizations/hierarchical.svg)
 
 ## Evaluations results
 Training the models for 5 epochs using a maximal token length of 100 and a batch size of 26.   
@@ -32,3 +32,7 @@ Input is allways a String, either only "Text" or if specified the categorie labe
 |8 | Classifier_lvl3_h     | p(2, Cat1). Cat2. Text        | Cat3             |-          | -          | 0.0196
 |9 | Classifier_lvl3_h     | Cat1. p(2, Cat4). Text        | Cat3             |-          | -          | 0.0076
 |10| Classifier_lvl3_h     | p(2, Cat1). p(2, Cat4). Text| Cat3             |-          | -          | 0.0076
+
+
+## Data token length distribution
+![Data_distribution](./visualizations/Data_analysis.svg)
