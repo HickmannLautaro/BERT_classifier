@@ -26,3 +26,7 @@ saved_model/Multi_2Cat/variables/
 saved_model/Multi_3Cat/variables/
 
 saved_model_2/lvl1/variables/variables.index
+
+saved_model_3/logs/image/20201127-141827/train/
+
+saved_model_3/logs/image/20201127-141827/cm/
