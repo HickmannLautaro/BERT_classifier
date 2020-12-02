@@ -16,6 +16,22 @@ Each document contains: Title, Text, Cat1, Cat2, Cat3
 ### Hierarchical
 ![hierarchical](./visualizations/hierarchical.svg)
 
+
+## New Evaluations results
+p(i,x) means predicted x by model i. Otherwise the Categorie labels are the target labels    
+Input is allways a String, either only "Text" or if specified the categorie labels concatenated with ". " before the text.
+
+|N°  | Model                 | Input                           |Output            |Cat1 accuracy| Cat2 accuracy|F1 score macro
+|:--|:----------------------|:--------------------------------|:-----------------|:-------------|:-------------|:-------------
+|0  | Classifier_multi_2Cat | Text                            | Cat1, Cat2       |0.8223        | 0.5404       |-
+|2  | Classifier_lvl1       | Text                            | Cat1             |0.8242        | -            | -            
+|2.1| Classifier_lvl1 300 T 10 ep     | Text                  | Cat1             |0.8241        | -            | -            
+|2.2| Classifier_lvl1 100 T 10 ep     | Text                  | Cat1             |0.8234        | -            |0.8234
+|2.3| Classifier_lvl1 512 T 10 ep     | Text                  | Cat1             |0.8230        | -            |0.8123
+|3  | Classifier_lvl2_f     | Text                            | Cat2             |-             | 0.5879       | -            
+|4  | Classifier_lvl2_h     | Cat1. Text                      | Cat2             |-             | 0.6670       | -            
+|5  | Classifier_lvl2_h     | p(2, Cat1). Text                | Cat2             |-             | 0.6315       | -            
+
 ## Evaluations results
 Training the models for 5 epochs using a maximal token length of 100 and a batch size of 26.   
 p(i,x) means predicted x by model i. Otherwise the Categorie labels are the target labels    
