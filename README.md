@@ -29,6 +29,7 @@ Input is allways a String, either only "Text" or if specified the categorie labe
 |2  | Classifier_lvl1       | Text                            | Cat1             |0.8242        | -            | -            |-
 |2.1| Classifier_lvl1 300 T 10 ep     | Text                  | Cat1             |0.8241        | -            | -            |-
 |2.2| Classifier_lvl1 100 T 10 ep     | Text                  | Cat1             |0.8234        | -            | -            |0.8234
+|2.3| Classifier_lvl1 512 T 10 ep     | Text                  | Cat1             |0.8230        | -            | -            |0.8123
 |3  | Classifier_lvl2_f     | Text                            | Cat2             |-             | 0.5879       | -            |-
 |4  | Classifier_lvl2_h     | Cat1. Text                      | Cat2             |-             | 0.6670       | -            |-
 |5  | Classifier_lvl2_h     | p(2, Cat1). Text                | Cat2             |-             | 0.6315       | -            |-
