@@ -1,32 +1,10 @@
 
 .ipynb_checkpoints/
 
-logs/image/20201126-104114/cm/
+*.data-00000-of-00001
 
-logs/image/20201126-104114/train/
-
-logs/image/20201126-104114/validation/
+*.index
 
 *.pb
 
-saved_model/lvl1/variables/
-
-saved_model/lvl2_f/variables/
-
-saved_model/lvl2_h/variables/
-
-saved_model/lvl3_f/variables/
-
-saved_model/lvl3_h/variables/
-
-saved_model/Multi_2Cat/variables/
-
-*.data-00000-of-00001
-
-saved_model/Multi_3Cat/variables/
-
-saved_model_2/lvl1/variables/variables.index
-
-saved_model_3/logs/image/20201127-141827/train/
-
-saved_model_3/logs/image/20201127-141827/cm/
+Old_notebooks/
