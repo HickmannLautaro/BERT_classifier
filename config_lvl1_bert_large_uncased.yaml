@@ -1,0 +1,6 @@
+model_name: bert-large-uncased
+max_length: 100
+epochs: 20
+batch_size: 14 #100T base-uncased: 50/ 100T large-uncase: 14
+repetitions: 5
+
