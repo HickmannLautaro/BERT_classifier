@@ -206,6 +206,8 @@ def run_experiment(arguments):
 
     # Load transformers config and set output_hidden_states to False
     config = BertConfig.from_pretrained(model_name)
+
+
     config.output_hidden_states = False
 
     # Load BERT tokenizer
@@ -214,7 +216,7 @@ def run_experiment(arguments):
     # Load the Transformers BERT model
     transformer_model = TFBertModel.from_pretrained(model_name, config=config)
 
-    ### ------- Build the model ------- ###
+    # ------- Build the model ------- ###
 
     # TF Keras documentation: https://www.tensorflow.org/api_docs/python/tf/keras/Model
 
@@ -226,6 +228,7 @@ def run_experiment(arguments):
     attention_mask = Input(shape=(max_length,), name='attention_mask',
                            dtype='int32')  # Ignores padded part of sentences
     inputs = {'input_ids': input_ids, 'attention_mask': attention_mask}
+
 
     # Load the Transformers BERT model as a layer in a Keras model
     bert_model = bert(inputs)[1]
@@ -303,7 +306,8 @@ def run_experiment(arguments):
         save_weights_only=True,
         monitor='val_accuracy',
         mode='max',
-        save_best_only=True)
+        save_best_only=True,
+        verbose=1)
 
     # Define the per-epoch callback.
     cm_callback = tf.keras.callbacks.LambdaCallback(on_epoch_end=log_confusion_matrix)
