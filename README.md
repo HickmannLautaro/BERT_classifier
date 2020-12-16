@@ -19,40 +19,40 @@ Each document contains: Title, Text, Cat1, Cat2, Cat3
 ## Results hyperparameter search:
 Results are on the Test set
 ### Ordered after best f1 score and accuracy
-|    | model              |   token |   epochs |     f1 |    acc |   f1 per second |   time per epoch (m) |
-|---:|:-------------------|--------:|---------:|-------:|-------:|----------------:|---------------------:|
-|  4 | bert-large-uncased |     200 |       10 | 0.8283 | 0.8364 |          0.0678 |                20.35 |
-|  6 | bert-large-uncased |     100 |       10 | 0.8277 | 0.8359 |          0.1273 |                10.83 |
-|  0 | bert-large-uncased |     100 |       20 | 0.8248 | 0.8339 |          0.1201 |                11.45 |
-|  3 | bert-large-uncased |     300 |       10 | 0.823  | 0.8325 |          0.0353 |                38.9  |
-|  5 | bert-large-uncased |     300 |       05 | 0.823  | 0.8311 |          0.0398 |                34.47 |
-| 13 | bert-base-uncased  |     300 |       05 | 0.8148 | 0.8238 |          0.1347 |                10.08 |
-|  1 | bert-large-uncased |     050 |       10 | 0.8145 | 0.8248 |          0.2545 |                 5.33 |
-| 10 | bert-base-uncased  |     100 |       20 | 0.8133 | 0.8229 |          0.4303 |                 3.15 |
-| 12 | bert-base-uncased  |     100 |       05 | 0.8111 | 0.8223 |          0.5069 |                 2.67 |
-| 11 | bert-base-uncased  |     512 |       05 | 0.8089 | 0.8183 |          0.0804 |                16.77 |
-|  2 | bert-large-uncased |     512 |       05 | 0.8088 | 0.82   |          0.0218 |                61.82 |
-|  9 | bert-base-cased    |     100 |       10 | 0.808  | 0.8179 |          0.4565 |                 2.95 |
-|  7 | bert-base-uncased  |     300 |       20 | 0.8077 | 0.8173 |          0.2776 |                 4.85 |
-|  8 | bert-base-uncased  |     512 |       20 | 0.8053 | 0.8155 |          0.1462 |                 9.18 |
+|    | model              |   token |   epochs |     f1 |    acc |   time per epoch (m) |   f1 per second |
+|---:|:-------------------|--------:|---------:|-------:|-------:|---------------------:|----------------:|
+|  4 | bert-large-uncased |     200 |       10 | 0.8283 | 0.8364 |                20.35 |          0.0678 |
+|  6 | bert-large-uncased |     100 |       10 | 0.8282 | 0.8364 |                10.83 |          0.1274 |
+|  0 | bert-large-uncased |     100 |       20 | 0.828  | 0.8364 |                11.45 |          0.1205 |
+|  3 | bert-large-uncased |     300 |       10 | 0.823  | 0.8325 |                38.9  |          0.0353 |
+|  5 | bert-large-uncased |     300 |       05 | 0.823  | 0.8311 |                34.47 |          0.0398 |
+|  1 | bert-large-uncased |     050 |       10 | 0.8178 | 0.828  |                 5.33 |          0.2556 |
+| 10 | bert-base-uncased  |     100 |       20 | 0.8164 | 0.8257 |                 3.15 |          0.432  |
+| 13 | bert-base-uncased  |     300 |       05 | 0.8148 | 0.8238 |                10.08 |          0.1347 |
+| 12 | bert-base-uncased  |     100 |       05 | 0.8126 | 0.8223 |                 2.67 |          0.5079 |
+|  9 | bert-base-cased    |     100 |       10 | 0.8103 | 0.8198 |                 2.95 |          0.4578 |
+| 11 | bert-base-uncased  |     512 |       05 | 0.8089 | 0.8183 |                16.77 |          0.0804 |
+|  2 | bert-large-uncased |     512 |       05 | 0.8088 | 0.82   |                61.82 |          0.0218 |
+|  7 | bert-base-uncased  |     300 |       20 | 0.8087 | 0.818  |                 4.85 |          0.2779 |
+|  8 | bert-base-uncased  |     512 |       20 | 0.8053 | 0.8155 |                 9.18 |          0.1462 |
 
 ### Ordered after best f1 per second ratio, i.e. $\frac{f1 \times 100}{\text{time per epoch} (s)}$
-|    | model              |   token |   epochs |     f1 |    acc |   f1 per second |   time per epoch (m) |
-|---:|:-------------------|--------:|---------:|-------:|-------:|----------------:|---------------------:|
-| 12 | bert-base-uncased  |     100 |       05 | 0.8111 | 0.8223 |          0.5069 |                 2.67 |
-|  9 | bert-base-cased    |     100 |       10 | 0.808  | 0.8179 |          0.4565 |                 2.95 |
-| 10 | bert-base-uncased  |     100 |       20 | 0.8133 | 0.8229 |          0.4303 |                 3.15 |
-|  7 | bert-base-uncased  |     300 |       20 | 0.8077 | 0.8173 |          0.2776 |                 4.85 |
-|  1 | bert-large-uncased |     050 |       10 | 0.8145 | 0.8248 |          0.2545 |                 5.33 |
-|  8 | bert-base-uncased  |     512 |       20 | 0.8053 | 0.8155 |          0.1462 |                 9.18 |
-| 13 | bert-base-uncased  |     300 |       05 | 0.8148 | 0.8238 |          0.1347 |                10.08 |
-|  6 | bert-large-uncased |     100 |       10 | 0.8277 | 0.8359 |          0.1273 |                10.83 |
-|  0 | bert-large-uncased |     100 |       20 | 0.8248 | 0.8339 |          0.1201 |                11.45 |
-| 11 | bert-base-uncased  |     512 |       05 | 0.8089 | 0.8183 |          0.0804 |                16.77 |
-|  4 | bert-large-uncased |     200 |       10 | 0.8283 | 0.8364 |          0.0678 |                20.35 |
-|  5 | bert-large-uncased |     300 |       05 | 0.823  | 0.8311 |          0.0398 |                34.47 |
-|  3 | bert-large-uncased |     300 |       10 | 0.823  | 0.8325 |          0.0353 |                38.9  |
-|  2 | bert-large-uncased |     512 |       05 | 0.8088 | 0.82   |          0.0218 |                61.82 |
+|    | model              |   token |   epochs |     f1 |    acc |   time per epoch (m) |   f1 per second |
+|---:|:-------------------|--------:|---------:|-------:|-------:|---------------------:|----------------:|
+| 12 | bert-base-uncased  |     100 |       05 | 0.8126 | 0.8223 |                 2.67 |          0.5079 |
+|  9 | bert-base-cased    |     100 |       10 | 0.8103 | 0.8198 |                 2.95 |          0.4578 |
+| 10 | bert-base-uncased  |     100 |       20 | 0.8164 | 0.8257 |                 3.15 |          0.432  |
+|  7 | bert-base-uncased  |     300 |       20 | 0.8087 | 0.818  |                 4.85 |          0.2779 |
+|  1 | bert-large-uncased |     050 |       10 | 0.8178 | 0.828  |                 5.33 |          0.2556 |
+|  8 | bert-base-uncased  |     512 |       20 | 0.8053 | 0.8155 |                 9.18 |          0.1462 |
+| 13 | bert-base-uncased  |     300 |       05 | 0.8148 | 0.8238 |                10.08 |          0.1347 |
+|  6 | bert-large-uncased |     100 |       10 | 0.8282 | 0.8364 |                10.83 |          0.1274 |
+|  0 | bert-large-uncased |     100 |       20 | 0.828  | 0.8364 |                11.45 |          0.1205 |
+| 11 | bert-base-uncased  |     512 |       05 | 0.8089 | 0.8183 |                16.77 |          0.0804 |
+|  4 | bert-large-uncased |     200 |       10 | 0.8283 | 0.8364 |                20.35 |          0.0678 |
+|  5 | bert-large-uncased |     300 |       05 | 0.823  | 0.8311 |                34.47 |          0.0398 |
+|  3 | bert-large-uncased |     300 |       10 | 0.823  | 0.8325 |                38.9  |          0.0353 |
+|  2 | bert-large-uncased |     512 |       05 | 0.8088 | 0.82   |                61.82 |          0.0218 |
 
 ### Graphs showing that only $5$ epochs are needed
 ![all_classses](./visualizations/f1_graph.png)
