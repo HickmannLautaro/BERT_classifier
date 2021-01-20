@@ -3,7 +3,11 @@
 Old_Files/
 Old_runs/
 saved_models/
-
+dbpedia/Data_analysis.svg
+dbpedia/test.csv
+dbpedia/train.csv
+dbpedia/DBP_wiki_data.csv
+.idea/
 .virtual_documents
 # Default ignored files
 .idea/shelf/

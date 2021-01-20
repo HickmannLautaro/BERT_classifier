@@ -55,7 +55,10 @@ def get_data(arguments):
 
     # Import data from csv
     data = pd.read_csv(data_path + "/train.csv")
+    data = data.rename(columns={"text":"Text","l1":"Cat1", "l2":"Cat2","l3":"Cat3"})
     test = pd.read_csv(data_path + "/test.csv")
+    test = test.rename(columns={"text":"Text","l1":"Cat1", "l2":"Cat2","l3":"Cat3"})
+
     
     # Add labels to text
     data, test = append_label(data, test, arguments)
