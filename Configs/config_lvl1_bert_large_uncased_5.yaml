@@ -1,7 +1,0 @@
-model_name: bert-large-uncased
-max_length: 50
-epochs: 10
-batch_size: 20 #100T : 14; 512T: 1
-repetitions: 2
-data_path: amazon
-lvl: 1

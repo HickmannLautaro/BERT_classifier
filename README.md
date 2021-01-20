@@ -10,11 +10,23 @@ The training set contains 40k documents and the test set 10k.
 Each document contains: Title, Text, Cat1, Cat2, Cat3  
 ## Model architectures
 
-### All at once
+### All at once (Not used anymore)
 ![all_classses](./visualizations/3clases.svg)
 
 ### Hierarchical
 ![hierarchical](./visualizations/hierarchical.svg)
+
+## Latest Evaluation results on
+### bert-base-uncased, 100 tokens and 5 epochs. Averaged over 4 runs.
+Results are on the Test set
+
+|Config                                 |Dataset |   Input             |   Output | Cat1 accuracy | Cat1 F1 score macro | Cat2 accuracy | Cat2 F1 score macro |Cat3 accuracy | Cat3 F1 score macro |
+|:--------------------------------------|:-------|--------------------:|---------:|--------------:|--------------------:|--------------:|--------------------:|-------------:|--------------------:|
+|config_lvl1_bert-base-uncased.yaml     |Amazon  |                Text |     Cat1 |        0.8276 |              0.8126 |             - |                   - |             -|                    -|
+|config_lvl2_flat_bert-base-uncased.yaml|Amazon  |                Text |     Cat2 |        -      |              -      |             - |                   - |             -|                    -|
+|config_lvl2_h_t_bert-base-uncased.yaml |Amazon  |          Cat1, Text |     Cat2 |        -      |              -      |             - |                   - |             -|                    -|
+|config_lvl2_h_p_bert-base-uncased.yaml |Amazon  |Predicted Cat1, Text |     Cat2 |        -      |              -      |             - |                   - |             -|                    -|
+
 
 ## Results hyperparameter search:
 Results are on the Test set
@@ -52,7 +64,7 @@ Results are on the Test set
 |  4 | bert-large-uncased |     200 |       10 | 0.8283 | 0.8364 |                20.35 |          0.0678 |
 |  5 | bert-large-uncased |     300 |       05 | 0.823  | 0.8311 |                34.47 |          0.0398 |
 |  3 | bert-large-uncased |     300 |       10 | 0.823  | 0.8325 |                38.9  |          0.0353 |
-|  2 | bert-large-uncased |     512 |       05 | 0.8088 | 0.82   |                61.82 |          0.0218 |
+|  2 | bert-large-uncased |     512 |       05 | 0.8088 | 0.82   |                61.82 |          0.0218 |  
 
 ### Graphs showing that only $5$ epochs are needed
 ![all_classses](./visualizations/f1_graph.png)
@@ -64,16 +76,17 @@ p(i,x) means predicted x by model i. Otherwise the Categorie labels are the targ
 Input is allways a String, either only "Text" or if specified the categorie labels concatenated with ". " before the text.
 
 
-|N°  | Model                 | Input                           |Output            |Cat1 accuracy| Cat2 accuracy|F1 score macro  
-|:--|:----------------------|:--------------------------------|:-----------------|:-------------|:-------------|:-------------  
-|0  | Classifier_multi_2Cat | Text                            | Cat1, Cat2       |0.8223        | 0.5404       |-  
-|2  | Classifier_lvl1       | Text                            | Cat1             |0.8242        | -            | -              
-|2.1| Classifier_lvl1 300 T 10 ep     | Text                  | Cat1             |0.8241        | -            | -              
-|2.2| Classifier_lvl1 100 T 10 ep     | Text                  | Cat1             |0.8234        | -            |0.8234  
-|2.3| Classifier_lvl1 512 T 10 ep     | Text                  | Cat1             |0.8230        | -            |0.8123  
-|3  | Classifier_lvl2_f     | Text                            | Cat2             |-             | 0.5879       | -              
-|4  | Classifier_lvl2_h     | Cat1. Text                      | Cat2             |-             | 0.6670       | -              
-|5  | Classifier_lvl2_h     | p(2, Cat1). Text                | Cat2             |-             | 0.6315       | -              
+|N° | Model                 | Input                           |Output            |Cat1 accuracy| Cat2 accuracy|F1 score macro|
+|:--|:----------------------|:--------------------------------|:-----------------|:-------------|:-------------|:-------------|
+|0  | Classifier_multi_2Cat | Text                            | Cat1, Cat2       |0.8223        | 0.5404       |-             |
+|2  | Classifier_lvl1       | Text                            | Cat1             |0.8242        | -            | -            |
+|2.1| Classifier_lvl1 300 T 10 ep     | Text                  | Cat1             |0.8241        | -            | -            |
+|2.2| Classifier_lvl1 100 T 10 ep     | Text                  | Cat1             |0.8234        | -            |0.8234        |
+|2.3| Classifier_lvl1 512 T 10 ep     | Text                  | Cat1             |0.8230        | -            |0.8123        |
+|3  | Classifier_lvl2_f     | Text                            | Cat2             |-             | 0.5879       | -            |
+|4  | Classifier_lvl2_h     | Cat1. Text                      | Cat2             |-             | 0.6670       | -            |
+|5  | Classifier_lvl2_h     | p(2, Cat1). Text                | Cat2             |-             | 0.6315       | -            |
+
 
 
 ## Evaluations results

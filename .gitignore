@@ -4,6 +4,7 @@ Old_Files/
 Old_runs/
 saved_models/
 
+.virtual_documents
 # Default ignored files
 .idea/shelf/
 .idea/workspace.xml

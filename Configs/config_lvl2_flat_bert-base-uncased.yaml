@@ -4,7 +4,7 @@ epochs: 5
 batch_size: 40
 repetitions: 4
 data_path: amazon
-lvl: 1
+lvl: 2
 # labels format: list of labels, i.e. [ label1, label2]
 # label_i is for no labels (lvl1 or flat):
 # label_i is for Target labels (direct from dataset): ['Target','Category name1', 'Category name2', 'Category name3']

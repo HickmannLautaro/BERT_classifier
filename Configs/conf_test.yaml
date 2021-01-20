@@ -1,8 +1,0 @@
-model_name: distilbert-base-uncased
-max_length: 512
-epochs: 20
-batch_size: 10 #100T : 50; 512T 5
-repetitions: 4
-data_path: amazon
-lvl: 1
-
