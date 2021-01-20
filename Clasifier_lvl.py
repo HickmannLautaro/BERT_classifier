@@ -31,6 +31,7 @@ def append_label(data, test, arguments):
     if arguments['labels'] is None:
         return data, test    
     for arg in arguments['labels']:
+
         if arg[0]=='Target':
             for cat in arg[1:][::-1]:
                 data['Text']=data[cat].str.cat(data['Text'],sep=". ")
@@ -87,6 +88,7 @@ def get_data(arguments):
     test_class_names = np.unique(test[cat_label])
     print("Class names: \n Train: {} \n Test {}".format(train_class_names, test_class_names))
 
+    print(data.head())
     train_target = to_categorical(data[cat_num])
     test_target=test[cat_num]
     
@@ -143,7 +145,7 @@ def plot_to_image(figure):
     return image
 
 
-def get_bert_model(model_name, config, data, max_length):
+def get_bert_model(model_name, config, data, max_length,class_names):
     # Load the Transformers BERT model
     transformer_model = TFBertModel.from_pretrained(model_name, config=config)
 
@@ -166,8 +168,8 @@ def get_bert_model(model_name, config, data, max_length):
     pooled_output = dropout(bert_model, training=False)
 
     # Then build your model output
-    output = Dense(units=len(data.Cat1_label.value_counts()),
-                   kernel_initializer=TruncatedNormal(stddev=config.initializer_range), name='Cat1')(pooled_output)
+    output = Dense(units=len(class_names),
+                   kernel_initializer=TruncatedNormal(stddev=config.initializer_range), name='Cat')(pooled_output)
 
     # And combine it all in a model object
     model = Model(inputs=inputs, outputs=output, name='BERT_MultiClass')
@@ -239,7 +241,8 @@ def run_experiment(arguments):
         if len(f1_score_list)>0 and np.max(f1_score_list) < f1_score:
             model.save_weights(filepath=checkpoint_filepath)
             print("F1 macro score improved from {:.4f} to {:.4f}. Model saved".format(np.max(f1_score_list), f1_score))
-
+        elif len(f1_score_list)>0 :
+            print("F1 macro score to {:.4f} did not improve from {:.4f} .".format(f1_score, np.max(f1_score_list) ))
                 
         accu.append(accuracy_score)
         f1_score_list.append(f1_score)
@@ -265,9 +268,10 @@ def run_experiment(arguments):
     epochs = arguments['epochs']
     batch_size = arguments['batch_size']
     lvl = arguments['lvl']
-    
+    hierar=arguments['hierar']
+    lable_type=arguments['lable_type']
     # --------- Setup logs paths ----------
-    path = "/" + model_name + "/lvl" + str(lvl) + "/" + str(max_length) + "T_" + str(epochs) + "e/"
+    path = "/" + model_name + "/lvl" + str(lvl) +"/" + hierar + "_" + lable_type+ "/" + str(max_length) + "T_" + str(epochs) + "e/"
 
     aux_path = os.getcwd() + "/saved_models" + path
     try:
@@ -337,7 +341,7 @@ def run_experiment(arguments):
     
     # Load the Transformers BERT model
     
-    model = get_bert_model(model_name, config, data, max_length)
+    model = get_bert_model(model_name, config, data, max_length, class_names)
     
     
     

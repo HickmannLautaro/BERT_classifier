@@ -17,12 +17,12 @@ Each document contains: Title, Text, Cat1, Cat2, Cat3
 ![hierarchical](./visualizations/hierarchical.svg)
 
 ## Latest Evaluation results on
-### bert-base-uncased, 100 tokens and 5 epochs. Averaged over 4 runs.
+### bert-base-uncased, 100 tokens and 20 epochs. Averaged over 4 runs.
 Results are on the Test set
 
 |Config                                 |Dataset |   Input             |   Output | Cat1 accuracy | Cat1 F1 score macro | Cat2 accuracy | Cat2 F1 score macro |Cat3 accuracy | Cat3 F1 score macro |
 |:--------------------------------------|:-------|--------------------:|---------:|--------------:|--------------------:|--------------:|--------------------:|-------------:|--------------------:|
-|config_lvl1_bert-base-uncased.yaml     |Amazon  |                Text |     Cat1 |        0.8276 |              0.8126 |             - |                   - |             -|                    -|
+|config_lvl1_bert-base-uncased.yaml     |Amazon  |                Text |     Cat1 |        0.8178 |              0.8268 |             - |                   - |             -|                    -|
 |config_lvl2_flat_bert-base-uncased.yaml|Amazon  |                Text |     Cat2 |        -      |              -      |             - |                   - |             -|                    -|
 |config_lvl2_h_t_bert-base-uncased.yaml |Amazon  |          Cat1, Text |     Cat2 |        -      |              -      |             - |                   - |             -|                    -|
 |config_lvl2_h_p_bert-base-uncased.yaml |Amazon  |Predicted Cat1, Text |     Cat2 |        -      |              -      |             - |                   - |             -|                    -|
