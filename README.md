@@ -114,14 +114,24 @@ Input is allways a String, either only "Text" or if specified the categorie labe
 
 
 ## Data token length distribution
-### Training data
-![Data_distribution](./visualizations/Data_analysis.svg)
-### Test data
-![Data_distribution](./visualizations/Data_analysis_test.svg)
+### Amazon
+
+#### Training data
+![Data_distribution](./visualizations/amazon/Data_analysis.svg)
+#### Test data
+![Data_distribution](./visualizations/amazon/Data_analysis_test.svg)
+
+### DBPedia
+
+#### Training data
+![Data_distribution](./visualizations/dbpedia/Data_analysis.svg)
+#### Test data
+![Data_distribution](./visualizations/dbpedia/Data_analysis_test.svg)
 
 
 ## Labels statistics
-### Training data
+### Amazon
+#### Training data
 Amount of appearances for Cat1:
  * unique values 6  
  * Minimal: grocery gourmet food appears 3617 times  
@@ -143,7 +153,7 @@ Amount of appearances for Cat3:
  * in average 86.21 times.  
 
 
-### Test data
+#### Test data
 Amount of appearances for Cat1:
  * unique values 6  
  * Minimal: baby products appears 698 times  
@@ -164,9 +174,49 @@ Amount of appearances for Cat3:
  * Maximal: vitamins supplements appears 665 times  
  * in average 26.53 times.  
 
+### DBPedia
+
+#### Training data
+Amount of appearances for Cat1: 
+ * unique values 9  
+ * Minimal: Device appears 248 times  
+ * Maximal: Agent appears 124798 times  
+ * in average 26771.33 times.  
+ 
+Amount of appearances for Cat2: 
+ * unique values 70  
+ * Minimal: Database appears 129 times  
+ * Maximal: Athlete appears 31111 times  
+ * in average 3442.03 times.  
+ 
+Amount of appearances for Cat3: 
+ * unique values 219  
+ * Minimal: BiologicalDatabase appears 129 times  
+ * Maximal: AcademicJournal appears 1924 times  
+ * in average 1100.19 times. 
+
+#### Test Data
+Amount of appearances for Cat1: 
+ * unique values 9  
+ * Minimal: Device appears 62 times  
+ * Maximal: Agent appears 31495 times  
+ * in average 6754.89 times.  
+ 
+Amount of appearances for Cat2: 
+ * unique values 70  
+ * Minimal: Database appears 33 times  
+ * Maximal: Athlete appears 7855 times  
+ * in average 868.49 times.  
+ 
+Amount of appearances for Cat3: 
+ * unique values 219  
+ * Minimal: BiologicalDatabase appears 33 times  
+ * Maximal: AcademicJournal appears 485 times  
+ * in average 277.60 times.
 ---
 
 [Based on](https://towardsdatascience.com/multi-label-multi-class-text-classification-with-bert-transformer-and-keras-c6355eccb63a)  
 [Pretrained models](https://huggingface.co/transformers/pretrained_models.html)  
 [BERT docu](https://huggingface.co/transformers/model_doc/bert.html)  
 [Hierarchical text classification](https://www.kaggle.com/kashnitsky/hierarchical-text-classification)
+[DBPedia](https://www.kaggle.com/danofer/dbpedia-classes?select=DBPEDIA_train.csv)
