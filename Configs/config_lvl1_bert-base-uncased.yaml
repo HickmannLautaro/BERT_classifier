@@ -11,5 +11,7 @@ lvl: 1
 # label_i is for predicted labels: ['Path to saved predictions1','Path to saved predictions2',...,'Path to saved predictions n']
 # And combinations of both. The order will be label1. label2. Text where for label1 it adds all. e.g. label1: [lb1, lb2] then lb1. lb2. label2. Text.
 labels:
+test_labels: 
 hierar: flatt
 lable_type: _
+test_labels_type: _
