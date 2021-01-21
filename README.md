@@ -17,19 +17,19 @@ Each document contains: Title, Text, Cat1, Cat2, Cat3
 ![hierarchical](./visualizations/hierarchical.svg)
 
 ## Latest Evaluation results on
-### bert-base-uncased, 100 tokens and 20 epochs. Averaged over 4 runs.
+### bert-base-uncased, 100 tokens and 40 epochs. Averaged over 2 runs.
 Results are on the Test set
 
-|Config                                       |Dataset |   Train Input       |   Output | Test Input               |Cat1 accuracy |Cat1 F1 score macro | Cat2 accuracy | Cat2 F1 score macro |Cat3 accuracy | Cat3 F1 score macro |
-|:--------------------------------------------|:-------|--------------------:|---------:|-------------------------:|-------------:|-------------------:|--------------:|--------------------:|-------------:|--------------------:|
-|config_lvl1_bert-base-uncased.yaml           |Amazon  |                Text |     Cat1 |  Text                    |       0.8269 |             0.8178 |             - |                   - |             -|                    -|
-|config_lvl2_flat_bert-base-uncased.yaml      |Amazon  |                Text |     Cat2 |                Text      |       -      |             -      |         -     |                   - |             -|                    -|
-|config_lvl2_flat_bert-base-uncased.yaml      |Amazon  |                Text |     Cat2 |Predicted Cat1, Text      |       -      |             -      |         -     |                   - |             -|                    -|
-|config_lvl2_flat_flatt_bert-base-uncased.yaml|Amazon  |                Text |     Cat2 | Text                     |       -      |             -      |         -     |                   - |             -|                    -|
-|config_lvl2_h_t_bert-base-uncased.yaml       |Amazon  |          Cat1, Text |     Cat2 |Predicted Cat1, Text      |       -      |             -      |             - |                   - |             -|                    -|
-|config_lvl2_h_t_flatt_bert-base-uncased.yaml |Amazon  |          Cat1, Text |     Cat2 | Text                     |       -      |             -      |             - |                   - |             -|                    -|
-|config_lvl2_h_p_bert-base-uncased.yaml       |Amazon  |Predicted Cat1, Text |     Cat2 |Predicted Cat1, Text      |       -      |             -      |             - |                   - |             -|                    -|
-|config_lvl2_h_p_flatt_bert-base-uncased.yaml |Amazon  |Predicted Cat1, Text |     Cat2 |Text                      |       -      |             -      |             - |                   - |             -|                    -|
+| Config                                        | Dataset | Epochs | Tokens | Runs | Train Input          | Output | Test Input           | Cat1 accuracy | Cat1 F1 score macro | Cat2 accuracy | Cat2 F1 score macro | Cat3 accuracy | Cat3 F1 score macro |
+|-----------------------------------------------|---------|--------|--------|------|----------------------|--------|----------------------|---------------|---------------------|---------------|---------------------|---------------|---------------------|
+| config_lvl1_bert-base-uncased.yaml            | Amazon  |  20    | 100    |    4 | Text                 | Cat1   | Text                 | 0.8269        | 0.8178              | -             | -                   | -             | -                   |
+| config_lvl2_flat_bert-base-uncased.yaml       | Amazon  |  40    | 100    |    2 | Text                 | Cat2   | Text                 | -             | -                   | -             | -                   | -             | -                   |
+| config_lvl2_flat_bert-base-uncased.yaml       | Amazon  |  40    | 100    |    2 | Text                 | Cat2   | Predicted Cat1, Text | -             | -                   | -             | -                   | -             | -                   |
+| config_lvl2_flat_flatt_bert-base-uncased.yaml | Amazon  |  40    | 100    |    2 | Text                 | Cat2   | Text                 | -             | -                   | -             | -                   | -             | -                   |
+| config_lvl2_h_t_bert-base-uncased.yaml        | Amazon  |  40    | 100    |    2 | Cat1, Text           | Cat2   | Predicted Cat1, Text | -             | -                   | -             | -                   | -             | -                   |
+| config_lvl2_h_t_flatt_bert-base-uncased.yaml  | Amazon  |  40    | 100    |    2 | Cat1, Text           | Cat2   | Text                 | -             | -                   | -             | -                   | -             | -                   |
+| config_lvl2_h_p_bert-base-uncased.yaml        | Amazon  |  40    | 100    |    2 | Predicted Cat1, Text | Cat2   | Predicted Cat1, Text | -             | -                   | -             | -                   | -             | -                   |
+| config_lvl2_h_p_flatt_bert-base-uncased.yaml  | Amazon  |  40    | 100    |    2 | Predicted Cat1, Text | Cat2   | Text                 | -             | -                   | -             | -                   | -             | -                   |
 
 
 ## Results hyperparameter search:
