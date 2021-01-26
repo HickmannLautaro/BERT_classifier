@@ -1,17 +1,14 @@
 model_name: bert-base-uncased
 max_length: 100
-epochs: 40
+epochs: 5
 batch_size: 40
-repetitions: 2
+repetitions: 4
 data_path: amazon
-lvl: 2
+lvl: 1
 # labels format: list of labels, i.e. [ label1, label2]
 # label_i is for no labels (lvl1 or flat):
 # label_i is for Target labels (direct from dataset): ['Target','Category name1', 'Category name2', 'Category name3']
 # label_i is for predicted labels: ['Path to saved predictions1','Path to saved predictions2',...,'Path to saved predictions n']
 # And combinations of both. The order will be label1. label2. Text where for label1 it adds all. e.g. label1: [lb1, lb2] then lb1. lb2. label2. Text.
-labels: [['Target','Cat1']]
-test_labels: [['saved_data/bert-base-uncased/amazon/lvl1/trained_flatt__tested__/100T_20e/Run4/test_pred_raw.npz']]
-hierar: hierarchical
-lable_type: Target
-test_labels_type: Predicted
+labels:  [['saved_data/bert-base-uncased/lvl1/100T_5e/Run1/test_pred_raw.npz'], ['Target', 'Cat1','Cat2'] ]#,['saved_data/bert-base-uncased/lvl1/100T_5e/Run1/test_pred_raw.npz','saved_data/bert-base-uncased/lvl1/100T_5e/Run1/test_pred_raw.npz']]
+

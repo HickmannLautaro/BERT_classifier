@@ -11,7 +11,7 @@ lvl: 2
 # label_i is for predicted labels: ['Path to saved predictions1','Path to saved predictions2',...,'Path to saved predictions n']
 # And combinations of both. The order will be label1. label2. Text where for label1 it adds all. e.g. label1: [lb1, lb2] then lb1. lb2. label2. Text.
 labels:
-test_labels: [['saved_data/bert-base-uncased/lvl1/flatt__/100T_20e/Run4/test_pred_raw.npz']]
+test_labels: [['saved_data/bert-base-uncased/amazon/lvl1/trained_flatt__tested__/100T_20e/Run4/test_pred_raw.npz']]
 hierar: flatt
 lable_type: _
 test_labels_type: Predicted

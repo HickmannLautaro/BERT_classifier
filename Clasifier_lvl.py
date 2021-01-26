@@ -31,7 +31,6 @@ import sys
 def append_label(data, test, arguments):
     if arguments['labels'] is not None:
         for arg in arguments['labels']:
-
             if arg[0] == 'Target':
                 for cat in arg[1:][::-1]:
                     data['Text'] = data[cat].str.cat(data['Text'], sep=". ")
@@ -50,11 +49,16 @@ def append_label(data, test, arguments):
 
     if arguments['test_labels'] is not None:
         for arg in arguments['test_labels']:
-            for cat in arg[::-1]:
-                file = np.load(cat, allow_pickle=True)
-                labels_test = file['test_class_names'][file['test_pred_raw'].argmax(axis=1)]
-                test['aux'] = labels_test
-                test['Text'] = test['aux'].str.cat(test['Text'], sep=". ")
+            if arg[0] == 'Target':
+                for cat in arg[1:][::-1]:
+                    test['Text'] = test[cat].str.cat(test['Text'], sep=". ")
+                    # test['Text']=test[cat].str.cat(test['Text'],sep=". ")
+            else:
+                for cat in arg[::-1]:
+                    file = np.load(cat, allow_pickle=True)
+                    labels_test = file['test_class_names'][file['test_pred_raw'].argmax(axis=1)]
+                    test['aux'] = labels_test
+                    test['Text'] = test['aux'].str.cat(test['Text'], sep=". ")
 
     return data, test
 
@@ -275,8 +279,9 @@ def run_experiment(arguments):
     hierar = arguments['hierar']
     lable_type = arguments['lable_type']
     test_labels_type = arguments['test_labels_type']
+    data_path = arguments['data_path']
     # --------- Setup logs paths ----------
-    path = "/" + model_name + "/lvl" + str(lvl) + "/trained_" + hierar + "_" + lable_type + "tested_"+test_labels_type+"/" + str(max_length) + "T_" + str(
+    path = "/" + model_name +"/"+data_path+ "/lvl" + str(lvl) + "/trained_" + hierar + "_" + lable_type + "tested_"+test_labels_type+"/" + str(max_length) + "T_" + str(
         epochs) + "e/"
 
     aux_path = os.getcwd() + "/saved_models" + path
