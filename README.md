@@ -33,7 +33,7 @@ Results are on the Test set
 | amazon_config_lvl2_h_p_bert-base-uncased          | amazon    |       40 |      100 |      2 | Predicted Cat1, Text | Cat2     | Predicted Cat1, Text | -               | -                     | 0.6107          | 0.4049                | -               | -                     |
 | dbpedia_config_lvl1_bert-base-uncased             | dbpedia   |       20 |      100 |      2 | Text                 | Cat1     | Text                 | 0.9961          | 0.9942                | -               | -                     | -               | -                     |
 | dbpedia_config_lvl2_flat_flatt_bert-base-uncased  | dbpedia   |       40 |      100 |      2 | Text                 | Cat2     | Text                 | -               | -                     | -               | -                     | -               | -                     |
-| dbpedia_config_lvl2_h_t_flatt_bert-base-uncased   | dbpedia   |       40 |      100 |      2 | Target Cat1, Text    | Cat2     | Text                 | -               | -                     | -               | -                     | -               | -                     |
+| dbpedia_config_lvl2_h_t_flatt_bert-base-uncased   | dbpedia   |       40 |      100 |      2 | Target Cat1, Text    | Cat2     | Text                 | -               | -                     | 0.9676          | 0.9486                | -               | -                     |
 | dbpedia_config_lvl2_h_p_flatt_bert-base-uncased   | dbpedia   |       40 |      100 |      2 | Predicted Cat1, Text | Cat2     | Text                 | -               | -                     | 0.9561          | 0.9434                | -               | -                     |
 | dbpedia_config_lvl2_flat_target_bert-base-uncased | dbpedia   |       40 |      100 |      2 | Text                 | Cat2     | Target Cat1, Text    | -               | -                     | -               | -                     | -               | -                     |
 | dbpedia_config_lvl2_h_t_target_bert-base-uncased  | dbpedia   |       40 |      100 |      2 | Target Cat1, Text    | Cat2     | Target Cat1, Text    | -               | -                     | -               | -                     | -               | -                     |
@@ -41,7 +41,6 @@ Results are on the Test set
 | dbpedia_config_lvl2_flat_bert-base-uncased        | dbpedia   |       40 |      100 |      2 | Text                 | Cat2     | Predicted Cat1, Text | -               | -                     | -               | -                     | -               | -                     |
 | dbpedia_config_lvl2_h_t_bert-base-uncased         | dbpedia   |       40 |      100 |      2 | Target Cat1, Text    | Cat2     | Predicted Cat1, Text | -               | -                     | -               | -                     | -               | -                     |
 | dbpedia_config_lvl2_h_p_bert-base-uncased         | dbpedia   |       40 |      100 |      2 | Predicted Cat1, Text | Cat2     | Predicted Cat1, Text | -               | -                     | -               | -                     | -               | -                     |
-
 
 ## Results hyperparameter search:
 Results are on the Test set
