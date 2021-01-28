@@ -18,6 +18,7 @@ from tensorflow.keras.utils import to_categorical
 # And pandas for data import + sklearn because you always need sklearn
 import pandas as pd
 import tensorflow as tf
+import tensorflow_addons as tfa
 import matplotlib.pyplot as plt
 import numpy as np
 import sklearn
@@ -201,7 +202,7 @@ def get_bert_model(model_name, config, data, max_length, class_names):
 
     # Set loss and metrics
     loss = CategoricalCrossentropy(from_logits=True)
-    metric = CategoricalAccuracy('accuracy')
+    metric = [CategoricalAccuracy('accuracy'),tfa.metrics.F1Score(num_classes=len(class_names), average='macro')]
 
     # Compile the model
     model.compile(
