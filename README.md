@@ -16,32 +16,75 @@ Each document contains: Title, Text, Cat1, Cat2, Cat3
 ### Hierarchical
 ![hierarchical](./visualizations/hierarchical.svg)
 
+## Check which experiments make sense
+
+|    | Dataset | Train Input            | Output | Test Input                | Useful |
+|----|---------|------------------------|--------|---------------------------|--------|
+| 0  | amazon  | Text                   | Cat1   | Text                      | x      |
+| 1  | amazon  | Text                   | Cat2   | Text                      | x      |
+| 2  | amazon  | Text                   | Cat2   | Target Cat1, Text         |        |
+| 3  | amazon  | Text                   | Cat2   | Predicted Cat1, Text      |        |
+| 4  | amazon  | Target Cat1, Text      | Cat2   | Text                      |        |
+| 5  | amazon  | Target Cat1, Text      | Cat2   | Target Cat1, Text         | x      |
+| 6  | amazon  | Target Cat1, Text      | Cat2   | Predicted Cat1, Text      | x      |
+| 7  | amazon  | Predicted Cat1, Text   | Cat2   | Text                      |        |
+| 8  | amazon  | Predicted Cat1, Text   | Cat2   | Target Cat1, Text         | x  ?   |
+| 9  | amazon  | Predicted Cat1, Text   | Cat2   | Predicted Cat1, Text      | x  ?   |
+| -  | ------- | ---------------------- | ------ | ------------------------- | ------ |
+| 10 | dbpedia | Text                   | Cat1   | Text                      | x      |
+| 11 | dbpedia | Text                   | Cat2   | Text                      | x      |
+| 12 | dbpedia | Text                   | Cat2   | Target Cat1, Text         |        |
+| 13 | dbpedia | Text                   | Cat2   | Predicted Cat1, Text      |        |
+| 14 | dbpedia | Target Cat1, Text      | Cat2   | Text                      |        |
+| 15 | dbpedia | Target Cat1, Text      | Cat2   | Target Cat1, Text         | x      |
+| 16 | dbpedia | Target Cat1, Text      | Cat2   | Predicted Cat1, Text      | x      |
+| 17 | dbpedia | Predicted Cat1, Text   | Cat2   | Text                      |        |
+| 18 | dbpedia | Predicted Cat1, Text   | Cat2   | Target Cat1, Text         | x      |
+| 19 | dbpedia | Predicted Cat1, Text   | Cat2   | Predicted Cat1, Text      | x      |
+| 20 | dbpedia | Text                   | Cat3   | Text                      | x      |
+| 21 | dbpedia | Target Cat2, Text      | Cat3   | Text                      |        |
+| 22 | dbpedia | Target Cat2, Text      | Cat3   | Target Cat2, Text         |        |
+| 23 | dbpedia | Target Cat1, Text      | Cat3   | Text                      |        |
+| 24 | dbpedia | Target Cat1, Text      | Cat3   | Target Cat1, Text         |        |
+| 25 | dbpedia | Target Cat1 Cat2, Text | Cat3   | Text                      |        |
+| 26 | dbpedia | Target Cat1 Cat2, Text | Cat3   | Target Cat1 Cat2, Text    | x      |
+| 27 | dbpedia | Target Cat1 Cat2, Text | Cat3   | Predicted Cat1 Cat2, Text | x      |
+
+
 ## Latest Evaluation results 
 Results are on the Test set
 
-| Config                                            | Dataset   |   Epochs |   Tokens |   Runs | Train Input          | Output   | Test Input           | Cat1 accuracy   | Cat1 F1 score macro   | Cat2 accuracy   | Cat2 F1 score macro   | Cat3 accuracy   | Cat3 F1 score macro   |
-|:--------------------------------------------------|:----------|---------:|---------:|-------:|:---------------------|:---------|:---------------------|:----------------|:----------------------|:----------------|:----------------------|:----------------|:----------------------|
-| amazon_config_lvl1_bert-base-uncased              | amazon    |       20 |      100 |      2 | Text                 | Cat1     | Text                 | 0.8264          | 0.8175                | -               | -                     | -               | -                     |
-| amazon_config_lvl2_flat_flatt_bert-base-uncased   | amazon    |       40 |      100 |      2 | Text                 | Cat2     | Text                 | -               | -                     | 0.6198          | 0.4025                | -               | -                     |
-| amazon_config_lvl2_h_t_flatt_bert-base-uncased    | amazon    |       40 |      100 |      2 | Target Cat1, Text    | Cat2     | Text                 | -               | -                     | 0.4516          | 0.2664                | -               | -                     |
-| amazon_config_lvl2_h_p_flatt_bert-base-uncased    | amazon    |       40 |      100 |      2 | Predicted Cat1, Text | Cat2     | Text                 | -               | -                     | 0.5248          | 0.311                 | -               | -                     |
-| amazon_config_lvl2_flat_target_bert-base-uncased  | amazon    |       40 |      100 |      2 | Text                 | Cat2     | Target Cat1, Text    | -               | -                     | 0.6202          | 0.389                 | -               | -                     |
-| amazon_config_lvl2_h_t_target_bert-base-uncased   | amazon    |       40 |      100 |      2 | Target Cat1, Text    | Cat2     | Target Cat1, Text    | -               | -                     | 0.7086          | 0.4612                | -               | -                     |
-| amazon_config_lvl2_h_p_Target_bert-base-uncased   | amazon    |       40 |      100 |      2 | Predicted Cat1, Text | Cat2     | Target Cat1, Text    | -               | -                     | 0.6978          | 0.4608                | -               | -                     |
-| amazon_config_lvl2_flat_bert-base-uncased         | amazon    |       40 |      100 |      2 | Text                 | Cat2     | Predicted Cat1, Text | -               | -                     | 0.5771          | 0.3621                | -               | -                     |
-| amazon_config_lvl2_h_t_bert-base-uncased          | amazon    |       40 |      100 |      2 | Target Cat1, Text    | Cat2     | Predicted Cat1, Text | -               | -                     | 0.6126          | 0.3958                | -               | -                     |
-| amazon_config_lvl2_h_p_bert-base-uncased          | amazon    |       40 |      100 |      2 | Predicted Cat1, Text | Cat2     | Predicted Cat1, Text | -               | -                     | 0.6107          | 0.4049                | -               | -                     |
+| Config                                                  | Dataset | Epochs | Tokens | Runs | Train Input            | Output | Test Input                | Cat1 accuracy | Cat1 F1 score macro | Cat2 accuracy | Cat2 F1 score macro | Cat3 accuracy | Cat3 F1 score macro |
+|---------------------------------------------------------|---------|--------|--------|------|------------------------|--------|---------------------------|---------------|---------------------|---------------|---------------------|---------------|---------------------|
+| amazon_config_lvl1_bert-base-uncased                    | amazon  | 20     | 100    | 2    | Text                   | Cat1   | Text                      | 0.8264        | 0.8175              | -             | -                   | -             | -                   |
+| amazon_config_lvl2_flat_flatt_bert-base-uncased         | amazon  | 40     | 100    | 2    | Text                   | Cat2   | Text                      | -             | -                   | 0.6198        | 0.4025              | -             | -                   |
+| amazon_config_lvl2_flat_target_bert-base-uncased        | amazon  | 40     | 100    | 2    | Text                   | Cat2   | Target Cat1, Text         | -             | -                   | 0.6202        | 0.389               | -             | -                   |
+| amazon_config_lvl2_flat_bert-base-uncased               | amazon  | 40     | 100    | 2    | Text                   | Cat2   | Predicted Cat1, Text      | -             | -                   | 0.5771        | 0.3621              | -             | -                   |
+| amazon_config_lvl2_h_t_flatt_bert-base-uncased          | amazon  | 40     | 100    | 2    | Target Cat1, Text      | Cat2   | Text                      | -             | -                   | 0.4516        | 0.2664              | -             | -                   |
+| amazon_config_lvl2_h_t_target_bert-base-uncased         | amazon  | 40     | 100    | 2    | Target Cat1, Text      | Cat2   | Target Cat1, Text         | -             | -                   | 0.7086        | 0.4612              | -             | -                   |
+| amazon_config_lvl2_h_t_bert-base-uncased                | amazon  | 40     | 100    | 2    | Target Cat1, Text      | Cat2   | Predicted Cat1, Text      | -             | -                   | 0.6126        | 0.3958              | -             | -                   |
+| amazon_config_lvl2_h_p_flatt_bert-base-uncased          | amazon  | 40     | 100    | 2    | Predicted Cat1, Text   | Cat2   | Text                      | -             | -                   | 0.5248        | 0.311               | -             | -                   |
+| amazon_config_lvl2_h_p_Target_bert-base-uncased         | amazon  | 40     | 100    | 2    | Predicted Cat1, Text   | Cat2   | Target Cat1, Text         | -             | -                   | 0.6978        | 0.4608              | -             | -                   |
+| amazon_config_lvl2_h_p_bert-base-uncased                | amazon  | 40     | 100    | 2    | Predicted Cat1, Text   | Cat2   | Predicted Cat1, Text      | -             | -                   | 0.6107        | 0.4049              | -             | -                   |
 |-------------------------------------------------- | ----------|--------- |--------- |------- | ---------------------| ---------| ---------------------| ----------------| ----------------------| ----------------| ----------------------| ----------------| ----------------------|
-| dbpedia_config_lvl1_bert-base-uncased             | dbpedia   |       20 |      100 |      2 | Text                 | Cat1     | Text                 | 0.9961          | 0.9942                | -               | -                     | -               | -                     |
-| dbpedia_config_lvl2_flat_flatt_bert-base-uncased  | dbpedia   |       40 |      100 |      2 | Text                 | Cat2     | Text                 | -               | -                     | 0.9751          | 0.9684                | -               | -                     |
-| dbpedia_config_lvl2_h_t_flatt_bert-base-uncased   | dbpedia   |       40 |      100 |      2 | Target Cat1, Text    | Cat2     | Text                 | -               | -                     | 0.9676          | 0.9486                | -               | -                     |
-| dbpedia_config_lvl2_h_p_flatt_bert-base-uncased   | dbpedia   |       40 |      100 |      2 | Predicted Cat1, Text | Cat2     | Text                 | -               | -                     | 0.9561          | 0.9434                | -               | -                     |
-| dbpedia_config_lvl2_flat_target_bert-base-uncased | dbpedia   |       40 |      100 |      2 | Text                 | Cat2     | Target Cat1, Text    | -               | -                     | 0.9752          | 0.968                 | -               | -                     |
-| dbpedia_config_lvl2_h_t_target_bert-base-uncased  | dbpedia   |       40 |      100 |      2 | Target Cat1, Text    | Cat2     | Target Cat1, Text    | -               | -                     | -               | -                     | -               | -                     |
-| dbpedia_config_lvl2_h_p_Target_bert-base-uncased  | dbpedia   |       40 |      100 |      2 | Predicted Cat1, Text | Cat2     | Target Cat1, Text    | -               | -                     | 0.979           | 0.9742                | -               | -                     |
-| dbpedia_config_lvl2_flat_bert-base-uncased        | dbpedia   |       40 |      100 |      2 | Text                 | Cat2     | Predicted Cat1, Text | -               | -                     | 0.9755          | 0.9692                | -               | -                     |
-| dbpedia_config_lvl2_h_t_bert-base-uncased         | dbpedia   |       40 |      100 |      2 | Target Cat1, Text    | Cat2     | Predicted Cat1, Text | -               | -                     | 0.9757          | 0.9697                | -               | -                     |
-| dbpedia_config_lvl2_h_p_bert-base-uncased         | dbpedia   |       40 |      100 |      2 | Predicted Cat1, Text | Cat2     | Predicted Cat1, Text | -               | -                     | 0.9761          | 0.9685                | -               | -                     |
+| dbpedia_config_lvl1_bert-base-uncased                   | dbpedia | 20     | 100    | 2    | Text                   | Cat1   | Text                      | 0.9961        | 0.9942              | -             | -                   | -             | -                   |
+| dbpedia_config_lvl2_flat_flatt_bert-base-uncased        | dbpedia | 40     | 100    | 2    | Text                   | Cat2   | Text                      | -             | -                   | 0.9751        | 0.9684              | -             | -                   |
+| dbpedia_config_lvl2_flat_target_bert-base-uncased       | dbpedia | 40     | 100    | 2    | Text                   | Cat2   | Target Cat1, Text         | -             | -                   | 0.9752        | 0.968               | -             | -                   |
+| dbpedia_config_lvl2_flat_bert-base-uncased              | dbpedia | 40     | 100    | 2    | Text                   | Cat2   | Predicted Cat1, Text      | -             | -                   | 0.9755        | 0.9692              | -             | -                   |
+| dbpedia_config_lvl2_h_t_flatt_bert-base-uncased         | dbpedia | 40     | 100    | 2    | Target Cat1, Text      | Cat2   | Text                      | -             | -                   | 0.9676        | 0.9486              | -             | -                   |
+| dbpedia_config_lvl2_h_t_target_bert-base-uncased        | dbpedia | 40     | 100    | 2    | Target Cat1, Text      | Cat2   | Target Cat1, Text         | -             | -                   | 0.9792        | 0.9763              | -             | -                   |
+| dbpedia_config_lvl2_h_t_bert-base-uncased               | dbpedia | 40     | 100    | 2    | Target Cat1, Text      | Cat2   | Predicted Cat1, Text      | -             | -                   | 0.9757        | 0.9697              | -             | -                   |
+| dbpedia_config_lvl2_h_p_flatt_bert-base-uncased         | dbpedia | 40     | 100    | 2    | Predicted Cat1, Text   | Cat2   | Text                      | -             | -                   | 0.9561        | 0.9434              | -             | -                   |
+| dbpedia_config_lvl2_h_p_Target_bert-base-uncased        | dbpedia | 40     | 100    | 2    | Predicted Cat1, Text   | Cat2   | Target Cat1, Text         | -             | -                   | 0.979         | 0.9742              | -             | -                   |
+| dbpedia_config_lvl2_h_p_bert-base-uncased               | dbpedia | 40     | 100    | 2    | Predicted Cat1, Text   | Cat2   | Predicted Cat1, Text      | -             | -                   | 0.9761        | 0.9685              | -             | -                   |
+| dbpedia_config_lvl3_flat_flatt_bert-base-uncased        | dbpedia | 40     | 100    | 2    | Text                   | Cat3   | Text                      | -             | -                   | -             | -                   | -             | -                   |
+| dbpedia_config_lvl3_2_target_flatt_bert-base-uncased    | dbpedia | 40     | 100    | 2    | Target Cat2, Text      | Cat3   | Text                      | -             | -                   | -             | -                   | -             | -                   |
+| dbpedia_config_lvl3_2_target_2_target_bert-base-uncased | dbpedia | 40     | 100    | 2    | Target Cat2, Text      | Cat3   | Target Cat2, Text         | -             | -                   | -             | -                   | -             | -                   |
+| dbpedia_config_lvl3_1_target_flatt_bert-base-uncased    | dbpedia | 40     | 100    | 2    | Target Cat1, Text      | Cat3   | Text                      | -             | -                   | -             | -                   | -             | -                   |
+| dbpedia_config_lvl3_1_target_1_target_bert-base-uncased | dbpedia | 40     | 100    | 2    | Target Cat1, Text      | Cat3   | Target Cat1, Text         | -             | -                   | -             | -                   | -             | -                   |
+| dbpedia_config_lvl3_targets_flatt_bert-base-uncased     | dbpedia | 40     | 100    | 2    | Target Cat1 Cat2, Text | Cat3   | Text                      | -             | -                   | -             | -                   | -             | -                   |
+| dbpedia_config_lvl3_targets_targets_bert-base-uncased   | dbpedia | 40     | 100    | 2    | Target Cat1 Cat2, Text | Cat3   | Target Cat1 Cat2, Text    | -             | -                   | -             | -                   | -             | -                   |
+| dbpedia_config_lvl3_targets_predicted_bert-base-uncased | dbpedia | 40     | 100    | 2    | Target Cat1 Cat2, Text | Cat3   | Predicted Cat1 Cat2, Text | -             | -                   | -             | -                   | -             | -                   |
 
 ## Results hyperparameter search:
 Results are on the Test set

@@ -10,9 +10,8 @@ lvl: 3
 # label_i is for Target labels (direct from dataset): ['Target','Category name1', 'Category name2', 'Category name3']
 # label_i is for predicted labels: ['Path to saved predictions1','Path to saved predictions2',...,'Path to saved predictions n']
 # And combinations of both. The order will be label1. label2. Text where for label1 it adds all. e.g. label1: [lb1, lb2] then lb1. lb2. label2. Text.
-labels: [['saved_data/bert-base-uncased/dbpedia/lvl1/trained_flatt__tested__/100T_20e/Run2/test_pred_raw.npz']]
-# Same as labels but this are used for prediction, i.e. should not be target only predicted labels
-test_labels: [['Target','Cat1']]
+labels: [['Target','Cat2']]
+test_labels:
 hierar: hierarchical
-lable_type: Predicted
-test_labels_type: Target
+lable_type: Target
+test_labels_type: _
