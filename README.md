@@ -69,7 +69,7 @@ Results are on the Test set
 | dbpedia_config_lvl2_h_t_bert-base-uncased               | dbpedia | 40     | 100    | 2    | Target Cat1, Text      | Cat2   | Predicted Cat1, Text      | -             | -                   | 0.9757        | 0.9697              | -             | -                   |
 | dbpedia_config_lvl2_h_p_bert-base-uncased               | dbpedia | 40     | 100    | 2    | Predicted Cat1, Text   | Cat2   | Predicted Cat1, Text      | -             | -                   | 0.9761        | 0.9685              | -             | -                   |
 | dbpedia_config_lvl3_flat_flatt_bert-base-uncased        | dbpedia | 40     | 100    | 2    | Text                   | Cat3   | Text                      | -             | -                   | -             | -                   | -             | -                   |
-| dbpedia_config_lvl3_targets_targets_bert-base-uncased   | dbpedia | 40     | 100    | 2    | Target Cat1 Cat2, Text | Cat3   | Target Cat1 Cat2, Text    | -             | -                   | -             | 0.9245 *            | -             | -                   |
+| dbpedia_config_lvl3_targets_targets_bert-base-uncased   | dbpedia | 40     | 100    | 2    | Target Cat1 Cat2, Text | Cat3   | Target Cat1 Cat2, Text    | -             | -                   | -             | -                   | -             | 0.9245 *            |
 | dbpedia_config_lvl3_targets_predicted_bert-base-uncased | dbpedia | 40     | 100    | 2    | Target Cat1 Cat2, Text | Cat3   | Predicted Cat1 Cat2, Text | -             | -                   | -             | -                   | -             | -                   |
 
 
