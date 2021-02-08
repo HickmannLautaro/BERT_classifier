@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
-# !/usr/bin/env python
-# coding: utf-8
+
 
 # -------- Load libraries ------- ###
 # Load Huggingface transformers
@@ -29,7 +28,7 @@ import yaml
 import sys
 
 
-def append_label(data, test, arguments):
+def append_label(data, arguments):
     if arguments['labels'] is not None:
         for arg in arguments['labels']:
             if arg[0] == 'Target':
@@ -48,20 +47,7 @@ def append_label(data, test, arguments):
                     # test['aux']=labels_test
                     # test['Text']=test['aux'].str.cat(test['Text'],sep=". ")
 
-    if arguments['test_labels'] is not None:
-        for arg in arguments['test_labels']:
-            if arg[0] == 'Target':
-                for cat in arg[1:][::-1]:
-                    test['Text'] = test[cat].str.cat(test['Text'], sep=". ")
-                    # test['Text']=test[cat].str.cat(test['Text'],sep=". ")
-            else:
-                for cat in arg[::-1]:
-                    file = np.load(cat, allow_pickle=True)
-                    labels_test = file['test_class_names'][file['test_pred_raw'].argmax(axis=1)]
-                    test['aux'] = labels_test
-                    test['Text'] = test['aux'].str.cat(test['Text'], sep=". ")
-
-    return data, test
+    return data
 
 
 def get_data(arguments):
@@ -71,17 +57,14 @@ def get_data(arguments):
     # Import data from csv
     data = pd.read_csv(data_path + "/train.csv")
     data = data.rename(columns={"text": "Text", "l1": "Cat1", "l2": "Cat2", "l3": "Cat3"})
-    test = pd.read_csv(data_path + "/test.csv")
-    test = test.rename(columns={"text": "Text", "l1": "Cat1", "l2": "Cat2", "l3": "Cat3"})
 
     # Add labels to text
-    data, test = append_label(data, test, arguments)
+    data = append_label(data, arguments)
 
     # Select target columns
     cat_num = str('Cat' + str(lvl))
 
     data = data[['Text', cat_num]]
-    test = test[['Text', cat_num]]
 
     # Training data
     # Set model output as categorical and save in new label col
@@ -90,76 +73,18 @@ def get_data(arguments):
     # Transform your output to numeric
     data[cat_num] = data[cat_label].cat.codes
 
-    # Setup test data for logging
-    # Set model output as categorical and save in new label col
-    test[cat_label] = pd.Categorical(test[cat_num])
-    # Transform your output to numeric
-    test[cat_num] = test[cat_label].cat.codes
-
     train_class_names = np.unique(data[cat_label])
 
-    test_class_names = np.unique(test[cat_label])
-    print("Class names: \n Train: {} \n Test {}".format(train_class_names, test_class_names))
+    print("Class names: \n Train: {} ".format(train_class_names))
     print("Training data")
     print(data.head())
-    print("Test data")
-    print(test.head())
+
     train_target = to_categorical(data[cat_num])
-    test_target = test[cat_num]
 
-    return data, test, train_class_names, test_class_names, train_target, test_target
-
-
-def plot_confusion_matrix(cm, f1_score, accuracy_score, class_names):
-    """
-    Returns a matplotlib figure containing the plotted confusion matrix.
-    Args:
-        :param cm: (array, shape = [n, n]): a confusion matrix of integer classes
-        :param class_names: (array, shape = [n]): String names of the integer classes
-        :param accuracy_score: accuracy score for plotting
-        :param f1_score: f1_score score for plotting
-    """
-    figure = plt.figure(figsize=(8, 8))
-    plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
-    plt.title("Confusion matrix, accuracy {:.4f} \n f1 Score {:.4f}".format(accuracy_score, f1_score))
-    plt.colorbar()
-    tick_marks = np.arange(len(class_names))
-    plt.xticks(tick_marks, class_names, rotation=45)
-    plt.yticks(tick_marks, class_names)
-
-    # Compute the labels from the normalized confusion matrix.
-    labels = np.around(cm.astype('float') / cm.sum(axis=1)[:, np.newaxis], decimals=2)
-
-    # Use white text if squares are dark; otherwise black.
-    threshold = cm.max() / 2.
-    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
-        color = "white" if cm[i, j] > threshold else "black"
-        plt.text(j, i, labels[i, j], horizontalalignment="center", color=color)
-
-    plt.tight_layout()
-    plt.ylabel('True label')
-    plt.xlabel('Predicted label')
-    return figure
+    return data, train_class_names, train_target
 
 
-def plot_to_image(figure):
-    """Converts the matplotlib plot specified by 'figure' to a PNG image and
-    returns it. The supplied figure is closed and inaccessible after this call."""
-    # Save the plot to a PNG in memory.
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-    # Closing the figure prevents it from being displayed directly inside
-    # the notebook.
-    plt.close(figure)
-    buf.seek(0)
-    # Convert PNG buffer to TF image
-    image = tf.image.decode_png(buf.getvalue(), channels=4)
-    # Add the batch dimension
-    image = tf.expand_dims(image, 0)
-    return image
-
-
-def get_bert_model(model_name, config, data, max_length, class_names):
+def get_bert_model(model_name, config, max_length, class_names):
     # Load the Transformers BERT model
     transformer_model = TFBertModel.from_pretrained(model_name, config=config)
 
@@ -202,7 +127,7 @@ def get_bert_model(model_name, config, data, max_length, class_names):
 
     # Set loss and metrics
     loss = CategoricalCrossentropy(from_logits=True)
-    metric = [CategoricalAccuracy('accuracy'),tfa.metrics.F1Score(num_classes=len(class_names), average='macro')]
+    metric = [CategoricalAccuracy('accuracy'), tfa.metrics.F1Score(num_classes=len(class_names), average='macro')]
 
     # Compile the model
     model.compile(
@@ -233,38 +158,13 @@ def get_tokenized(model_name, config, data, max_length):
     return x
 
 
-def run_experiment(arguments):
-    def log_confusion_matrix(epoch, logs):
+def run_experiment(arguments, hyp_search=False):
+    print("Tensorflow version: ", tf.__version__)
 
-        # Use the model to predict the values from the validation dataset.
-        test_pred_raw_conf = model.predict(
-            x={'input_ids': test_x['input_ids'], 'attention_mask': test_x['attention_mask']})
-        test_pred = np.argmax(test_pred_raw_conf, axis=1)
-
-        # Calculate the confusion matrix.
-        cm = sklearn.metrics.confusion_matrix(test_target, test_pred)
-
-        f1_score = sklearn.metrics.f1_score(test_target, test_pred, average='macro')
-        accuracy_score = sklearn.metrics.accuracy_score(test_target, test_pred)
-
-        # Save weights of best val_accuracy
-        if len(f1_score_list) > 0 and np.max(f1_score_list) < f1_score:
-            model.save_weights(filepath=checkpoint_filepath)
-            print("F1 macro score improved from {:.4f} to {:.4f}. Model saved".format(np.max(f1_score_list), f1_score))
-        elif len(f1_score_list) > 0:
-            print("F1 macro score did not improve. Actual {:.4f}, best {:.4f}.".format(f1_score, np.max(f1_score_list)))
-
-        accu.append(accuracy_score)
-        f1_score_list.append(f1_score)
-        # Log the confusion matrix as an image summary.
-        figure = plot_confusion_matrix(cm, f1_score, accuracy_score, class_names=class_names)
-        cm_image = plot_to_image(figure)
-
-        # Log the confusion matrix as an image summary.
-        with file_writer_cm.as_default():
-            tf.summary.image("Confusion Matrix", cm_image, step=epoch)
-            tf.summary.scalar("Test accuracy", accuracy_score, step=epoch)
-            tf.summary.scalar("f1_score", f1_score, step=epoch)
+    # rtx 3080 tf 2.4.0-rc4 bug
+    gpu_devices = tf.config.experimental.list_physical_devices('GPU')
+    tf.config.experimental.set_memory_growth(gpu_devices[0], True)
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
     print("#" * 150)
     print("#" * 150)
@@ -282,17 +182,16 @@ def run_experiment(arguments):
     test_labels_type = arguments['test_labels_type']
     data_path = arguments['data_path']
     # --------- Setup logs paths ----------
-    path = "/" + model_name +"/"+data_path+ "/lvl" + str(lvl) + "/trained_" + hierar + "_" + lable_type + "tested_"+test_labels_type+"/" + str(max_length) + "T_" + str(
+    path = "/" + model_name + "/" + data_path + "/lvl" + str(
+        lvl) + "/trained_" + hierar + "_" + lable_type + "tested_" + test_labels_type + "/" + str(
+        max_length) + "T_" + str(
         epochs) + "e/"
-
-    aux_path = os.getcwd() + "/saved_models" + path
-    try:
-        os.makedirs(aux_path)
-    except OSError:
-        print("%s already exists" % aux_path)
+    if hyp_search:
+        aux_path = os.getcwd() + "/hyperparameters_search" + path
     else:
-        print("Successfully created the directory %s " % aux_path)
-    aux_path = os.getcwd() + "/saved_data" + path
+        aux_path = os.getcwd() + "/saved_models" + path
+
+
     try:
         os.makedirs(aux_path)
     except OSError:
@@ -300,7 +199,11 @@ def run_experiment(arguments):
     else:
         print("Successfully created the directory %s " % aux_path)
 
-    dir_list = os.listdir("./saved_models" + path)
+    if hyp_search:
+        dir_list = os.listdir("./hyperparameters_search" + path)
+    else:
+        dir_list = os.listdir("./saved_models" + path)
+
     if len(dir_list) == 0:
         run = 1
     else:
@@ -311,39 +214,26 @@ def run_experiment(arguments):
 
     print("Run started: " + path)
 
-    path_model = "./saved_models" + path
+    if hyp_search:
+        path_model = "./hyperparameters_search" + path
+    else:
+        path_model = "./saved_models" + path
+
     logdir = path_model + "/logs"
     path_save_model = path_model + "/model/"
-    checkpoint_filepath = path_model + '/checkpoint/'
-    log_dir_custom_scalars = logdir + '/custom_metrics'
-    path_data = "./saved_data" + path
 
-    try:
-        os.makedirs(path_data)
-    except OSError:
-        print("%s already exists" % aux_path)
-    else:
-        print("Successfully created the directory %s " % aux_path)
-
-    path_model_plot = path_data + "/model.png"
-    path_confusion_mat = path_data + '/conf.png'
-    path_saved_data = path_data + "/test_pred_raw.npz"
+    path_model_plot = path_model + "/model.png"
 
     print("Config: " + path + "\nRelative paths " +
           "\n \n##### Model data #####" +
           "\n \nlog dir:" + logdir +
-          "\n \nlog custom scalars dir:" + log_dir_custom_scalars +
-          "\n \nCheckpoint dir:" + checkpoint_filepath +
           "\n \nSaved model dir:" + path_save_model +
           "\n \n \n##### Plots and predictions #####" +
-          "\n \nPlots dir:" + path_model_plot +
-          "\n \nConfusion matrix dir:" + path_confusion_mat +
-          "\n \nSaved data dir:" + path_saved_data)
+          "\n \nPlots dir:" + path_model_plot)
 
     ### --------- Import data --------- ###
 
-    data, test, train_class_names, class_names, target, test_target = get_data(arguments)
-
+    data, train_class_names, target = get_data(arguments)
     ### --------- Load BERT ---------- ###
 
     # Load transformers config and set output_hidden_states to False
@@ -352,26 +242,17 @@ def run_experiment(arguments):
 
     # Load the Transformers BERT model
 
-    model = get_bert_model(model_name, config, data, max_length, class_names)
+    model = get_bert_model(model_name, config, max_length, train_class_names)
 
     # Tokenize the input (takes some time) for training and test (for logging) data
 
     x = get_tokenized(model_name, config, data, max_length)
 
-    test_x = get_tokenized(model_name, config, test, max_length)
-
     ### ------- Callbacks ------- ###
     # Tensorboard callback
     tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir, histogram_freq=1, write_graph=False,
-                                                          write_images=True, profile_batch='2,9')
-    # Custom summary writer for custom scalars and confusion matrix
-    file_writer_cm = tf.summary.create_file_writer(log_dir_custom_scalars)
-
-    # Define the per-epoch callback.
-    cm_callback = tf.keras.callbacks.LambdaCallback(on_epoch_end=log_confusion_matrix)
-
-    accu = []
-    f1_score_list = []
+                                                          write_images=True, profile_batch='10,20')
+    earlystopping = tf.keras.callbacks.EarlyStopping(monitor='val_f1_score', verbose=3, mode="max", restore_best_weights=True)
     ### ------- Train the model ------- ###
     # Batch size table rtx 3080
     # 100T base-uncased: 50
@@ -384,10 +265,9 @@ def run_experiment(arguments):
         validation_split=0.2,
         batch_size=batch_size,
         epochs=epochs,
-        callbacks=[tensorboard_callback, cm_callback])
+        callbacks=[tensorboard_callback,earlystopping])
 
     # Load the best weights and save the model
-    model.load_weights(checkpoint_filepath)
     model.save(path_save_model)
 
     tf.keras.utils.plot_model(
@@ -400,47 +280,11 @@ def run_experiment(arguments):
         dpi=96,
     )
 
-    # ----- Evaluate the model ------   
-
-    test_pred_raw = model.predict(x={'input_ids': test_x['input_ids'], 'attention_mask': test_x['attention_mask']},
-                                  verbose=1)
-    train_pred_raw = model.predict(x={'input_ids': x['input_ids'], 'attention_mask': x['attention_mask']}, verbose=1)
-
-    test_pred = np.argmax(test_pred_raw, axis=1)
-    # Calculate the confusion matrix.
-    cm = sklearn.metrics.confusion_matrix(test_target, test_pred)
-    cm[np.around(cm.astype('float') / cm.sum(axis=1)[:, np.newaxis], decimals=2) < 0.05] = 0
-
-    f1_score = sklearn.metrics.f1_score(test_target, test_pred, average='macro')
-    accuracy_score = sklearn.metrics.accuracy_score(test_target, test_pred)
-    # Log the confusion matrix as an image summary.
-    figure = plot_confusion_matrix(cm, f1_score, accuracy_score, class_names=class_names)
-
-    figure.savefig(path_confusion_mat)
-    plt.close(figure)
-
-    # noinspection PyTypeChecker
-    report = sklearn.metrics.classification_report(test_target, test_pred, target_names=class_names, digits=4)
-    accu = np.array(accu)
-    f1_score_list = np.array(f1_score_list)
-
-    # Save data for hierarchical runs
-    np.savez(path_saved_data, test_pred_raw=test_pred_raw, f1_score=f1_score, accuracy_score=accuracy_score,
-             train_pred_raw=train_pred_raw, report=report, accu_list=accu, f1_score_list=f1_score_list,
-             hist=history.history, train_class_names=train_class_names, test_class_names=class_names)
-
     print("Run finished: " + path)
 
 
 def main():
     list_args = sys.argv[1:]
-
-    print("Tensorflow version: ", tf.__version__)
-
-    # rtx 3080 tf 2.4.0-rc4 bug
-    gpu_devices = tf.config.experimental.list_physical_devices('GPU')
-    tf.config.experimental.set_memory_growth(gpu_devices[0], True)
-    os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
     if len(list_args) < 1:
         print("Config missing")
