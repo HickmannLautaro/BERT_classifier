@@ -151,9 +151,7 @@ Results are on the Test set
 |  3 | bert-large-uncased |     300 |       10 | 0.823  | 0.8325 |                38.9  |          0.0353 |
 |  2 | bert-large-uncased |     512 |       05 | 0.8088 | 0.82   |                61.82 |          0.0218 |  
 
-### Graphs showing that only $5$ epochs are needed
-![all_classses](./visualizations/f1_graph.png)
-![all_classses](./visualizations/accu_graph.png)
+
 
 
 ## New Evaluations results
