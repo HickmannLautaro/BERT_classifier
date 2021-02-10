@@ -114,6 +114,7 @@ def get_data(arguments,hyp_search=False):
     cat_num = str('Cat' + str(lvl))
 
     data = data[['Text', cat_num]]
+    data = data.sample(frac=1)
 
     # Training data
     # Set model output as categorical and save in new label col
