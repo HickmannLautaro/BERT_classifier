@@ -91,7 +91,7 @@ def append_test_label(test, arguments):
                     # test['Text']=test[cat].str.cat(test['Text'],sep=". ")
             else:
                 for cat in arg[::-1]:
-                    file = np.load(cat, allow_pickle=True)
+                    file = np.load(cat, allow_pickle=True) #TODO actually load modell and predict labels
                     labels_test = file['test_class_names'][file['test_pred_raw'].argmax(axis=1)]
                     test['aux'] = labels_test
                     test['Text'] = test['aux'].str.cat(test['Text'], sep=". ")
@@ -326,7 +326,7 @@ def run_experiment(arguments, hyp_search=False):
 
     model = get_bert_model(model_name, config, max_length, train_class_names, hyp_search)
 
-    # Tokenize the input (takes some time) for training and test (for logging) data
+    # Tokenize the input (takes some time) for training and test (for logging) data	
 
     x = get_tokenized(model_name, config, data, max_length)
 
@@ -336,7 +336,7 @@ def run_experiment(arguments, hyp_search=False):
                                                           write_images=True, profile_batch='10,20')
 
     earlystopping = tf.keras.callbacks.EarlyStopping(monitor='val_f1_score', verbose=1, mode="max",patience=4,
-                                                     restore_best_weights=True, min_delta=0.0001)
+                                                     restore_best_weights=True, min_delta=0.0005)
     ### ------- Train the model ------- ###
     # Batch size table rtx 3080
     # 100T base-uncased: 50

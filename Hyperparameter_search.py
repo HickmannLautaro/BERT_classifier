@@ -3,6 +3,8 @@ from Train_BERT import run_experiment
 import tensorflow as tf
 from tensorboard.plugins.hparams import api as hp
 import os
+import sys
+
 
 def hyp_search_lvl1_flatt():
     HP_MAX_LENGTH = hp.HParam('max_length', hp.Discrete([64, 100, 256, 512]))
@@ -70,6 +72,7 @@ def hyp_search_lvl1_flatt():
 
             session_num += 1
 
+
 def hyp_search_lvl2_flatt():
     HP_MAX_LENGTH = hp.HParam('max_length', hp.Discrete([64, 100, 256, 512]))
     HP_BATCH_SIZE = hp.HParam('batch_size', hp.Discrete([60, 20, 40, 5]))
@@ -136,7 +139,8 @@ def hyp_search_lvl2_flatt():
 
             session_num += 1
 
-def hyp_search_lvl2_target_predicted():
+
+def hyp_search_lvl2_target_predicted(path_predicted):
     HP_MAX_LENGTH = hp.HParam('max_length', hp.Discrete([64, 100, 256, 512]))
     HP_BATCH_SIZE = hp.HParam('batch_size', hp.Discrete([60, 20, 40, 5]))
 
@@ -151,7 +155,7 @@ def hyp_search_lvl2_target_predicted():
                  'data_path': 'amazon',
                  'lvl': 2,
                  'labels': [['Target', 'Cat1']],
-                 'test_labels': [['saved_data/bert-base-uncased/amazon/lvl1/trained_flatt__tested__/100T_20e/Run4/test_pred_raw.npz']],
+                 'test_labels': [[path_predicted]],
                  'hierar': 'hierarchical',
                  'lable_type': 'Target',
                  'test_labels_type': 'Predicted'}
@@ -202,6 +206,7 @@ def hyp_search_lvl2_target_predicted():
 
             session_num += 1
 
+
 def hyp_search_lvl2_target_target():
     HP_MAX_LENGTH = hp.HParam('max_length', hp.Discrete([64, 100, 256, 512]))
     HP_BATCH_SIZE = hp.HParam('batch_size', hp.Discrete([60, 20, 40, 5]))
@@ -216,8 +221,8 @@ def hyp_search_lvl2_target_target():
                  'repetitions': 1,
                  'data_path': 'amazon',
                  'lvl': 2,
-                 'labels': [['Target','Cat1']],
-                 'test_labels': [['Target','Cat1']],
+                 'labels': [['Target', 'Cat1']],
+                 'test_labels': [['Target', 'Cat1']],
                  'hierar': 'hierarchical',
                  'lable_type': 'Target',
                  'test_labels_type': 'Target'}
@@ -226,13 +231,13 @@ def hyp_search_lvl2_target_target():
     lvl = arguments['lvl']
     data_path = arguments['data_path']
 
-    with tf.summary.create_file_writer("hyperparameters_search/" + model_name + "/" + data_path + "/lvl" + str(lvl) + '/logs/hparam_tuning').as_default():
+    with tf.summary.create_file_writer("hyperparameters_search/" + model_name + "/" + data_path + "/lvl" + str(
+            lvl) + '/logs/hparam_tuning').as_default():
         hp.hparams_config(
             hparams=[HP_MAX_LENGTH, HP_BATCH_SIZE],
             metrics=[hp.Metric(METRIC_ACCURACY, display_name='accuracy_score'),
                      hp.Metric(METRIC_f1, display_name='f1_score')],
         )
-
 
     def train_test_model_lvl1_flatt(hparams, arguments):
         arguments['max_length'] = hparams[HP_MAX_LENGTH]  # arguments['max_length']
@@ -261,13 +266,15 @@ def hyp_search_lvl2_target_target():
             print('--- Starting trial: %s' % run_name)
             print({h.name: hparams[h] for h in hparams})
             try:
-                run("hyperparameters_search/" + model_name + "/" + data_path + "/lvl" + str( lvl) + '/logs/hparam_tuning/' + run_name, hparams, arguments)
+                run("hyperparameters_search/" + model_name + "/" + data_path + "/lvl" + str(
+                    lvl) + '/logs/hparam_tuning/' + run_name, hparams, arguments)
             except tf.errors.ResourceExhaustedError as e:
                 print("Out of memory")
 
             session_num += 1
 
-def hyp_search_lvl2_predicted_predicted():
+
+def hyp_search_lvl2_predicted_predicted(path_predicted):
     HP_MAX_LENGTH = hp.HParam('max_length', hp.Discrete([64, 100, 256, 512]))
     HP_BATCH_SIZE = hp.HParam('batch_size', hp.Discrete([60, 20, 40, 5]))
 
@@ -281,8 +288,8 @@ def hyp_search_lvl2_predicted_predicted():
                  'repetitions': 1,
                  'data_path': 'amazon',
                  'lvl': 2,
-                 'labels': [['saved_data/bert-base-uncased/amazon/lvl1/trained_flatt__tested__/100T_20e/Run4/test_pred_raw.npz']],
-                 'test_labels': [['saved_data/bert-base-uncased/amazon/lvl1/trained_flatt__tested__/100T_20e/Run4/test_pred_raw.npz']],
+                 'labels': [[path_predicted]],
+                 'test_labels': [[path_predicted]],
                  'hierar': 'hierarchical',
                  'lable_type': 'Predicted',
                  'test_labels_type': 'Predicted'}
@@ -291,13 +298,13 @@ def hyp_search_lvl2_predicted_predicted():
     lvl = arguments['lvl']
     data_path = arguments['data_path']
 
-    with tf.summary.create_file_writer("hyperparameters_search/" + model_name + "/" + data_path + "/lvl" + str(lvl) + '/logs/hparam_tuning').as_default():
+    with tf.summary.create_file_writer("hyperparameters_search/" + model_name + "/" + data_path + "/lvl" + str(
+            lvl) + '/logs/hparam_tuning').as_default():
         hp.hparams_config(
             hparams=[HP_MAX_LENGTH, HP_BATCH_SIZE],
             metrics=[hp.Metric(METRIC_ACCURACY, display_name='accuracy_score'),
                      hp.Metric(METRIC_f1, display_name='f1_score')],
         )
-
 
     def train_test_model_lvl1_flatt(hparams, arguments):
         arguments['max_length'] = hparams[HP_MAX_LENGTH]  # arguments['max_length']
@@ -326,11 +333,13 @@ def hyp_search_lvl2_predicted_predicted():
             print('--- Starting trial: %s' % run_name)
             print({h.name: hparams[h] for h in hparams})
             try:
-                run("hyperparameters_search/" + model_name + "/" + data_path + "/lvl" + str( lvl) + '/logs/hparam_tuning/' + run_name, hparams, arguments)
+                run("hyperparameters_search/" + model_name + "/" + data_path + "/lvl" + str(
+                    lvl) + '/logs/hparam_tuning/' + run_name, hparams, arguments)
             except tf.errors.ResourceExhaustedError as e:
                 print("Out of memory")
 
             session_num += 1
+
 
 def main():
     print("Tensorflow version: ", tf.__version__)
@@ -340,30 +349,57 @@ def main():
     tf.config.experimental.set_memory_growth(gpu_devices[0], True)
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-    hyp_search_lvl1_flatt()
-    print("hyp_search_lvl1_flatt done")
-    print("#" * 150)
-    print("#" * 150)
-    print("#" * 150)
-    print("#" * 150)
-    hyp_search_lvl2_flatt()
-    print("hyp_search_lvl2_flatt done")
-    print("#" * 150)
-    print("#" * 150)
-    print("#" * 150)
-    print("#" * 150)
-    hyp_search_lvl2_target_predicted()
-    print("hyp_search_lvl2_target_predicted done")
-    print("#" * 150)
-    print("#" * 150)
-    print("#" * 150)
-    print("#" * 150)
-    hyp_search_lvl2_target_target()
-    print("hyp_search_lvl2_target_target done")
-    print("#" * 150)
-    print("#" * 150)
-    print("#" * 150)
-    print("#" * 150)
-    hyp_search_lvl2_predicted_predicted()
+    list_args = sys.argv[1:]
+    if len(list_args) < 1:
+        print(
+            "Give one or more options to search hyperparameters:\n Flat_lvl1, Flat_lvl2, tgt_pred, tgt_tgt, pred_pred \n for runs containing pre give config and path to model") #TODO now givin saved data is ok but change to take model
+        sys.exit(2)
+
+    for i, conf in enumerate(list_args):
+        if conf == "Flat_lvl1":
+            hyp_search_lvl1_flatt()
+            print("hyp_search_lvl1_flatt done")
+            print("#" * 150)
+            print("#" * 150)
+            print("#" * 150)
+            print("#" * 150)
+        elif conf == "Flat_lvl2":
+            hyp_search_lvl2_flatt()
+            print("hyp_search_lvl2_flatt done")
+            print("#" * 150)
+            print("#" * 150)
+            print("#" * 150)
+            print("#" * 150)
+        elif conf == "tgt_pred":
+            hyp_search_lvl2_target_predicted(list_args[i+1])
+            print("hyp_search_lvl2_target_predicted done")
+            print("#" * 150)
+            print("#" * 150)
+            print("#" * 150)
+            print("#" * 150)
+            continue
+        elif conf == "tgt_tgt":
+            hyp_search_lvl2_target_target()
+            print("hyp_search_lvl2_target_target done")
+            print("#" * 150)
+            print("#" * 150)
+            print("#" * 150)
+            print("#" * 150)
+        elif conf == "pred_pred":
+            print(list_args)
+            hyp_search_lvl2_predicted_predicted(list_args[i+1])
+            print("hyp_search_lvl2_target_target done")
+            print("#" * 150)
+            print("#" * 150)
+            print("#" * 150)
+            print("#" * 150)
+            continue
+        else:
+            print("Wrong input options to search hyperparameters:\n Flat_lvl1, Flat_lvl2, tgt_pred, tgt_tgt, pred_pred")
+            return 1
+
+    print("Search done for", list_args)
+
+
 if __name__ == "__main__":
     main()
