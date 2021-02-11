@@ -1,8 +1,10 @@
 import yaml
+import os
+os.environ["TF_CPP_MIN_LOG_LEVEL"]='2'
 from Train_BERT import run_experiment
 import tensorflow as tf
 from tensorboard.plugins.hparams import api as hp
-import os
+
 import sys
 
 
@@ -349,10 +351,11 @@ def main():
     tf.config.experimental.set_memory_growth(gpu_devices[0], True)
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
+
     list_args = sys.argv[1:]
     if len(list_args) < 1:
         print(
-            "Give one or more options to search hyperparameters:\n Flat_lvl1, Flat_lvl2, tgt_pred, tgt_tgt, pred_pred \n for runs containing pre give config and path to model") #TODO now givin saved data is ok but change to take model
+            "Give one or more options to search hyperparameters:\n Flat_lvl1, Flat_lvl2, tgt_pred, tgt_tgt, pred_pred \n for runs containing pre give config and path to model")
         sys.exit(2)
 
     for i, conf in enumerate(list_args):

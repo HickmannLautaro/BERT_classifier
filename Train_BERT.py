@@ -91,7 +91,7 @@ def append_test_label(test, arguments):
                     # test['Text']=test[cat].str.cat(test['Text'],sep=". ")
             else:
                 for cat in arg[::-1]:
-                    file = np.load(cat, allow_pickle=True) #TODO actually load modell and predict labels
+                    file = np.load(cat, allow_pickle=True)
                     labels_test = file['test_class_names'][file['test_pred_raw'].argmax(axis=1)]
                     test['aux'] = labels_test
                     test['Text'] = test['aux'].str.cat(test['Text'], sep=". ")
@@ -276,6 +276,7 @@ def run_experiment(arguments, hyp_search=False):
 
     if hyp_search:
         dir_list = os.listdir("./hyperparameters_search" + path)
+
     else:
         dir_list = os.listdir("./saved_models" + path)
 
@@ -306,12 +307,23 @@ def run_experiment(arguments, hyp_search=False):
 
     path_model_plot = path_model + "/model.png"
 
-    print("Config: " + path + "\nRelative paths " +
-          "\n \n##### Model data #####" +
-          "\n \nlog dir:" + logdir +
-          "\n \nSaved model dir:" + path_save_model +
-          "\n \n \n##### Plots and predictions #####" +
-          "\n \nPlots dir:" + path_model_plot)
+    if hyp_search:
+        print("Config: " + path + "\nRelative paths " +
+              "\n \n##### Model data #####" +
+              "\n \nlog dir:" + logdir +
+              "\n \nSaved model dir:" + path_save_model +
+              "\n \n \n##### Plots and predictions #####" +
+              "\n \nPlots dir:" + path_model_plot)
+    else:
+        path_saved_data = path_model + "/test_pred_raw.npz"
+        print("Config: " + path + "\nRelative paths " +
+              "\n \n##### Model data #####" +
+              "\n \nlog dir:" + logdir +
+              "\n \nSaved model dir:" + path_save_model +
+              "\n \n \n##### Plots and predictions #####" +
+              "\n \nPlots dir:" + path_model_plot +
+              "\n \nSaved data dir:" + path_saved_data)
+
 
     ### --------- Import data --------- ###
 
@@ -332,15 +344,18 @@ def run_experiment(arguments, hyp_search=False):
 
     ### ------- Callbacks ------- ###
     # Tensorboard callback
-    tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir, histogram_freq=1, write_graph=False,
-                                                          write_images=True, profile_batch='10,20')
 
+    if hyp_search:
+        tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir, write_graph=False)
+        delta=0.0005
+    else:
+        tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir, histogram_freq=1, write_graph=False,
+                                                              write_images=True, profile_batch='10,20')
+        delta = 0.0001
     earlystopping = tf.keras.callbacks.EarlyStopping(monitor='val_f1_score', verbose=1, mode="max",patience=4,
-                                                     restore_best_weights=True, min_delta=0.0005)
+                                                     restore_best_weights=True, min_delta=delta)
     ### ------- Train the model ------- ###
-    # Batch size table rtx 3080
-    # 100T base-uncased: 50
-    # 100T large-uncased: 14
+
 
     # Fit the model
     history = model.fit(
@@ -366,35 +381,39 @@ def run_experiment(arguments, hyp_search=False):
     )
 
     print("Run finished: " + path)
+    test, test_class_names, test_target = get_test_data(arguments)
+    # ----- Evaluate the model ------
+    test_x = get_tokenized(model_name, config, test, max_length)
+
+    test_pred_raw = model.predict(x={'input_ids': test_x['input_ids'], 'attention_mask': test_x['attention_mask']},
+                                  verbose=1)
+
+
+    test_pred = np.argmax(test_pred_raw, axis=1)
+    # Calculate the confusion matrix.
+    cm = sklearn.metrics.confusion_matrix(test_target, test_pred)
+    cm[np.around(cm.astype('float') / cm.sum(axis=1)[:, np.newaxis], decimals=2) < 0.05] = 0
+
+    f1_score = sklearn.metrics.f1_score(test_target, test_pred, average='macro')
+    accuracy_score = sklearn.metrics.accuracy_score(test_target, test_pred)
+
+    path_confusion_mat = path_model + '/conf.png'
+
+    figure = plot_confusion_matrix(cm, f1_score, accuracy_score, class_names=test_class_names)
+    figure.savefig(path_confusion_mat)
+    plt.close(figure)
+
+    # noinspection PyTypeChecker
+    report = sklearn.metrics.classification_report(test_target, test_pred, target_names=test_class_names, digits=4)
     if hyp_search:
-        test, test_class_names, test_target = get_test_data(arguments)
-        # ----- Evaluate the model ------
-        test_x = get_tokenized(model_name, config, test, max_length)
 
-        test_pred_raw = model.predict(x={'input_ids': test_x['input_ids'], 'attention_mask': test_x['attention_mask']},
-                                      verbose=1)
-
-        test_pred = np.argmax(test_pred_raw, axis=1)
-        # Calculate the confusion matrix.
-        cm = sklearn.metrics.confusion_matrix(test_target, test_pred)
-        cm[np.around(cm.astype('float') / cm.sum(axis=1)[:, np.newaxis], decimals=2) < 0.05] = 0
-
-        f1_score = sklearn.metrics.f1_score(test_target, test_pred, average='macro')
-        accuracy_score = sklearn.metrics.accuracy_score(test_target, test_pred)
-
-        path_confusion_mat = path_model + '/conf.png'
-
-        figure = plot_confusion_matrix(cm, f1_score, accuracy_score, class_names=test_class_names)
-        figure.savefig(path_confusion_mat)
-        plt.close(figure)
-
-        # noinspection PyTypeChecker
-        report = sklearn.metrics.classification_report(test_target, test_pred, target_names=test_class_names, digits=4)
-
-        np.savez(path_model+ '/rep_amd_histo.npz', report=report, hist=history.history)
+        np.savez(path_model+ '/rep_and_histo.npz', report=report, hist=history.history)
 
         return f1_score, accuracy_score
-
+    else:
+        train_pred_raw = model.predict(x={'input_ids': x['input_ids'], 'attention_mask': x['attention_mask']}, verbose=1)
+        np.savez(path_saved_data, test_pred_raw=test_pred_raw, f1_score=f1_score, accuracy_score=accuracy_score,
+                 train_pred_raw=train_pred_raw, report=report, hist=history.history, train_class_names=train_class_names, test_class_names=test_class_names)
 
 def main():
     print("Tensorflow version: ", tf.__version__)
