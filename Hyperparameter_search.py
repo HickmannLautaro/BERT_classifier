@@ -4,7 +4,7 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"]='2'
 from Train_BERT import run_experiment
 import tensorflow as tf
 from tensorboard.plugins.hparams import api as hp
-
+import numpy as np
 import sys
 
 
@@ -33,7 +33,7 @@ def hyp_search_lvl1_flatt():
     data_path = arguments['data_path']
 
     with tf.summary.create_file_writer("hyperparameters_search/" + model_name + "/" + data_path + "/lvl" + str(
-            lvl) + '/logs/hparam_tuning').as_default():
+            lvl) + '/hparam_tuning').as_default():
         hp.hparams_config(
             hparams=[HP_MAX_LENGTH, HP_BATCH_SIZE],
             metrics=[hp.Metric(METRIC_ACCURACY, display_name='accuracy_score'),
@@ -44,9 +44,10 @@ def hyp_search_lvl1_flatt():
         arguments['max_length'] = hparams[HP_MAX_LENGTH]  # arguments['max_length']
         arguments['batch_size'] = hparams[HP_BATCH_SIZE]  # arguments['epochs']
 
-        f1_score, accuracy_score = run_experiment(arguments, hyp_search=True, )
+        f1_score_1, accuracy_score_1 = run_experiment(arguments, hyp_search=True, )
+        f1_score_2, accuracy_score_2 = run_experiment(arguments, hyp_search=True, )
 
-        return f1_score, accuracy_score
+        return np.mean([f1_score_1,f1_score_2]), np.mean([accuracy_score_1, accuracy_score_2])
 
     def run(run_dir, hparams, arguments):
         with tf.summary.create_file_writer(run_dir).as_default():
@@ -68,7 +69,7 @@ def hyp_search_lvl1_flatt():
             print({h.name: hparams[h] for h in hparams})
             try:
                 run("hyperparameters_search/" + model_name + "/" + data_path + "/lvl" + str(
-                    lvl) + '/logs/hparam_tuning/' + run_name, hparams, arguments)
+                    lvl) + '/hparam_tuning/' + run_name, hparams, arguments)
             except tf.errors.ResourceExhaustedError as e:
                 print("Out of memory")
 
@@ -100,7 +101,7 @@ def hyp_search_lvl2_flatt():
     data_path = arguments['data_path']
 
     with tf.summary.create_file_writer("hyperparameters_search/" + model_name + "/" + data_path + "/lvl" + str(
-            lvl) + '/logs/hparam_tuning').as_default():
+            lvl) + '/hparam_tuning').as_default():
         hp.hparams_config(
             hparams=[HP_MAX_LENGTH, HP_BATCH_SIZE],
             metrics=[hp.Metric(METRIC_ACCURACY, display_name='accuracy_score'),
@@ -111,9 +112,10 @@ def hyp_search_lvl2_flatt():
         arguments['max_length'] = hparams[HP_MAX_LENGTH]  # arguments['max_length']
         arguments['batch_size'] = hparams[HP_BATCH_SIZE]  # arguments['epochs']
 
-        f1_score, accuracy_score = run_experiment(arguments, hyp_search=True, )
+        f1_score_1, accuracy_score_1 = run_experiment(arguments, hyp_search=True, )
+        f1_score_2, accuracy_score_2 = run_experiment(arguments, hyp_search=True, )
 
-        return f1_score, accuracy_score
+        return np.mean([f1_score_1, f1_score_2]), np.mean([accuracy_score_1, accuracy_score_2])
 
     def run(run_dir, hparams, arguments):
         with tf.summary.create_file_writer(run_dir).as_default():
@@ -135,7 +137,7 @@ def hyp_search_lvl2_flatt():
             print({h.name: hparams[h] for h in hparams})
             try:
                 run("hyperparameters_search/" + model_name + "/" + data_path + "/lvl" + str(
-                    lvl) + '/logs/hparam_tuning/' + run_name, hparams, arguments)
+                    lvl) + '/hparam_tuning/' + run_name, hparams, arguments)
             except tf.errors.ResourceExhaustedError as e:
                 print("Out of memory")
 
@@ -167,7 +169,7 @@ def hyp_search_lvl2_target_predicted(path_predicted):
     data_path = arguments['data_path']
 
     with tf.summary.create_file_writer("hyperparameters_search/" + model_name + "/" + data_path + "/lvl" + str(
-            lvl) + '/logs/hparam_tuning').as_default():
+            lvl) + '/hparam_tuning').as_default():
         hp.hparams_config(
             hparams=[HP_MAX_LENGTH, HP_BATCH_SIZE],
             metrics=[hp.Metric(METRIC_ACCURACY, display_name='accuracy_score'),
@@ -178,9 +180,10 @@ def hyp_search_lvl2_target_predicted(path_predicted):
         arguments['max_length'] = hparams[HP_MAX_LENGTH]  # arguments['max_length']
         arguments['batch_size'] = hparams[HP_BATCH_SIZE]  # arguments['epochs']
 
-        f1_score, accuracy_score = run_experiment(arguments, hyp_search=True, )
+        f1_score_1, accuracy_score_1 = run_experiment(arguments, hyp_search=True, )
+        f1_score_2, accuracy_score_2 = run_experiment(arguments, hyp_search=True, )
 
-        return f1_score, accuracy_score
+        return np.mean([f1_score_1, f1_score_2]), np.mean([accuracy_score_1, accuracy_score_2])
 
     def run(run_dir, hparams, arguments):
         with tf.summary.create_file_writer(run_dir).as_default():
@@ -202,7 +205,7 @@ def hyp_search_lvl2_target_predicted(path_predicted):
             print({h.name: hparams[h] for h in hparams})
             try:
                 run("hyperparameters_search/" + model_name + "/" + data_path + "/lvl" + str(
-                    lvl) + '/logs/hparam_tuning/' + run_name, hparams, arguments)
+                    lvl) + '/hparam_tuning/' + run_name, hparams, arguments)
             except tf.errors.ResourceExhaustedError as e:
                 print("Out of memory")
 
@@ -234,7 +237,7 @@ def hyp_search_lvl2_target_target():
     data_path = arguments['data_path']
 
     with tf.summary.create_file_writer("hyperparameters_search/" + model_name + "/" + data_path + "/lvl" + str(
-            lvl) + '/logs/hparam_tuning').as_default():
+            lvl) + '/hparam_tuning').as_default():
         hp.hparams_config(
             hparams=[HP_MAX_LENGTH, HP_BATCH_SIZE],
             metrics=[hp.Metric(METRIC_ACCURACY, display_name='accuracy_score'),
@@ -245,9 +248,10 @@ def hyp_search_lvl2_target_target():
         arguments['max_length'] = hparams[HP_MAX_LENGTH]  # arguments['max_length']
         arguments['batch_size'] = hparams[HP_BATCH_SIZE]  # arguments['epochs']
 
-        f1_score, accuracy_score = run_experiment(arguments, hyp_search=True, )
+        f1_score_1, accuracy_score_1 = run_experiment(arguments, hyp_search=True, )
+        f1_score_2, accuracy_score_2 = run_experiment(arguments, hyp_search=True, )
 
-        return f1_score, accuracy_score
+        return np.mean([f1_score_1, f1_score_2]), np.mean([accuracy_score_1, accuracy_score_2])
 
     def run(run_dir, hparams, arguments):
         with tf.summary.create_file_writer(run_dir).as_default():
@@ -269,7 +273,7 @@ def hyp_search_lvl2_target_target():
             print({h.name: hparams[h] for h in hparams})
             try:
                 run("hyperparameters_search/" + model_name + "/" + data_path + "/lvl" + str(
-                    lvl) + '/logs/hparam_tuning/' + run_name, hparams, arguments)
+                    lvl) + '/hparam_tuning/' + run_name, hparams, arguments)
             except tf.errors.ResourceExhaustedError as e:
                 print("Out of memory")
 
@@ -301,7 +305,7 @@ def hyp_search_lvl2_predicted_predicted(path_predicted):
     data_path = arguments['data_path']
 
     with tf.summary.create_file_writer("hyperparameters_search/" + model_name + "/" + data_path + "/lvl" + str(
-            lvl) + '/logs/hparam_tuning').as_default():
+            lvl) + '/hparam_tuning').as_default():
         hp.hparams_config(
             hparams=[HP_MAX_LENGTH, HP_BATCH_SIZE],
             metrics=[hp.Metric(METRIC_ACCURACY, display_name='accuracy_score'),
@@ -312,9 +316,10 @@ def hyp_search_lvl2_predicted_predicted(path_predicted):
         arguments['max_length'] = hparams[HP_MAX_LENGTH]  # arguments['max_length']
         arguments['batch_size'] = hparams[HP_BATCH_SIZE]  # arguments['epochs']
 
-        f1_score, accuracy_score = run_experiment(arguments, hyp_search=True, )
+        f1_score_1, accuracy_score_1 = run_experiment(arguments, hyp_search=True, )
+        f1_score_2, accuracy_score_2 = run_experiment(arguments, hyp_search=True, )
 
-        return f1_score, accuracy_score
+        return np.mean([f1_score_1, f1_score_2]), np.mean([accuracy_score_1, accuracy_score_2])
 
     def run(run_dir, hparams, arguments):
         with tf.summary.create_file_writer(run_dir).as_default():
@@ -336,7 +341,7 @@ def hyp_search_lvl2_predicted_predicted(path_predicted):
             print({h.name: hparams[h] for h in hparams})
             try:
                 run("hyperparameters_search/" + model_name + "/" + data_path + "/lvl" + str(
-                    lvl) + '/logs/hparam_tuning/' + run_name, hparams, arguments)
+                    lvl) + '/hparam_tuning/' + run_name, hparams, arguments)
             except tf.errors.ResourceExhaustedError as e:
                 print("Out of memory")
 

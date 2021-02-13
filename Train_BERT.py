@@ -405,9 +405,11 @@ def run_experiment(arguments, hyp_search=False):
 
     # noinspection PyTypeChecker
     report = sklearn.metrics.classification_report(test_target, test_pred, target_names=test_class_names, digits=4)
+
+
     if hyp_search:
 
-        np.savez(path_model+ '/rep_and_histo.npz', report=report, hist=history.history)
+        np.savez(path_model+ "tested_" + test_labels_type +"/rep_and_histo.npz" , report=report, hist=history.history)
 
         return f1_score, accuracy_score
     else:
