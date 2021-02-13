@@ -19,6 +19,8 @@ dbpedia/DBP_wiki_data.csv
 # Editor-based HTTP Client requests
 .idea/httpRequests/
 
-/dbpedia/
-/amazon/
-/saved_data/
+
+**/checkpoint/
+**/logs/
+**/model
+/dbpedia/val.csv

@@ -258,7 +258,7 @@ def run_experiment(arguments, hyp_search=False):
     data_path = arguments['data_path']
     # --------- Setup logs paths ----------
     path = "/" + model_name + "/" + data_path + "/lvl" + str(
-        lvl) + "/trained_" + hierar + "_" + lable_type + "tested_" + test_labels_type + "/" + str(
+        lvl) + "/trained_" + hierar + "_" + lable_type + "/" + str(
         max_length) + "T_" + str(
         epochs) + "e/"
 
