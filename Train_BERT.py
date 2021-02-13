@@ -409,7 +409,7 @@ def run_experiment(arguments, hyp_search=False):
 
     if hyp_search:
 
-        np.savez(path_model+ "tested_" + test_labels_type +"/rep_and_histo.npz" , report=report, hist=history.history)
+        np.savez(path_model+ "/tested_" + test_labels_type +"/rep_and_histo.npz" , report=report, hist=history.history)
 
         return f1_score, accuracy_score
     else:
