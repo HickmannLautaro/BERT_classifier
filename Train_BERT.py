@@ -408,12 +408,17 @@ def run_experiment(arguments, hyp_search=False):
 
 
     if hyp_search:
+        try:
+            os.makedirs(path_model+ "/tested_" + test_labels_type)
+        except OSError:
+            pass
 
         np.savez(path_model+ "/tested_" + test_labels_type +"/rep_and_histo.npz" , report=report, hist=history.history)
 
         return f1_score, accuracy_score
     else:
         train_pred_raw = model.predict(x={'input_ids': x['input_ids'], 'attention_mask': x['attention_mask']}, verbose=1)
+
         np.savez(path_saved_data, test_pred_raw=test_pred_raw, f1_score=f1_score, accuracy_score=accuracy_score,
                  train_pred_raw=train_pred_raw, report=report, hist=history.history, train_class_names=train_class_names, test_class_names=test_class_names)
 
