@@ -1,8 +1,8 @@
 model_name: bert-base-uncased
 max_length: 100
-epochs: 40
-batch_size: 40
-repetitions: 2
+epochs: 60
+batch_size: 45
+repetitions: 3
 data_path: amazon
 lvl: 2
 # labels format: list of labels, i.e. [ label1, label2]

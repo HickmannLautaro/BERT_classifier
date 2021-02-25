@@ -92,7 +92,7 @@ def append_test_label(test, arguments):
             else:
                 for cat in arg[::-1]:
                     file = np.load(cat, allow_pickle=True)
-                    labels_test = file['test_class_names'][file['test_pred_raw'].argmax(axis=1)]
+                    labels_test = file['test_class_names'][file['rep_and_histo'].argmax(axis=1)]
                     test['aux'] = labels_test
                     test['Text'] = test['aux'].str.cat(test['Text'], sep=". ")
 
@@ -257,14 +257,22 @@ def run_experiment(arguments, hyp_search=False):
     test_labels_type = arguments['test_labels_type']
     data_path = arguments['data_path']
     # --------- Setup logs paths ----------
-    path = "/" + model_name + "/" + data_path + "/lvl" + str(
-        lvl) + "/trained_" + hierar + "_" + lable_type + "/" + str(
-        max_length) + "T_" + str(
-        epochs) + "e_" + str(batch_size) + "b/"
+
+
 
     if hyp_search:
+        path = "/" + model_name + "/" + data_path + "/lvl" + str(
+            lvl) + "/trained_" + hierar + "_" + lable_type + "/tested_" + test_labels_type+ "/" + str(
+            max_length) + "T_" + str(
+            epochs) + "e_" + str(batch_size) + "b/"
         aux_path = os.getcwd() + "/hyperparameters_search" + path
     else:
+
+        path = "/" + model_name + "/" + data_path + "/lvl" + str(
+            lvl) + "/trained_" + hierar + "_" + lable_type + "/" + str(
+            max_length) + "T_" + str(
+            epochs) + "e_" + str(batch_size) + "b/"
+
         aux_path = os.getcwd() + "/saved_models" + path
 
     try:
@@ -305,24 +313,21 @@ def run_experiment(arguments, hyp_search=False):
     logdir = path_model + "/logs"
     path_save_model = path_model + "/model/"
 
-    path_model_plot = path_model + "/model.png"
+    path_saved_data = path_model + "/tested_" + test_labels_type
+    path_model_plot = path_saved_data + "/model.png"
 
-    if hyp_search:
-        print("Config: " + path + "\nRelative paths " +
-              "\n \n##### Model data #####" +
-              "\n \nlog dir:" + logdir +
-              "\n \nSaved model dir:" + path_save_model +
-              "\n \n \n##### Plots and predictions #####" +
-              "\n \nPlots dir:" + path_model_plot)
-    else:
-        path_saved_data = path_model + "/test_pred_raw.npz"
-        print("Config: " + path + "\nRelative paths " +
-              "\n \n##### Model data #####" +
-              "\n \nlog dir:" + logdir +
-              "\n \nSaved model dir:" + path_save_model +
-              "\n \n \n##### Plots and predictions #####" +
-              "\n \nPlots dir:" + path_model_plot +
-              "\n \nSaved data dir:" + path_saved_data)
+    try:
+        os.makedirs(path_saved_data)
+    except OSError:
+        pass
+
+    print("Config: " + path + "\nRelative paths " +
+          "\n \n##### Model data #####" +
+          "\n \nlog dir:" + logdir +
+          "\n \nSaved model dir:" + path_save_model +
+          "\n \n \n##### Plots and predictions #####" +
+          "\n \nPlots dir:" + path_model_plot +
+          "\n \nSaved data dir:" + path_saved_data)
 
 
     ### --------- Import data --------- ###
@@ -397,7 +402,8 @@ def run_experiment(arguments, hyp_search=False):
     f1_score = sklearn.metrics.f1_score(test_target, test_pred, average='macro')
     accuracy_score = sklearn.metrics.accuracy_score(test_target, test_pred)
 
-    path_confusion_mat = path_model + '/conf.png'
+
+    path_confusion_mat = path_saved_data + '/conf.png'
 
     figure = plot_confusion_matrix(cm, f1_score, accuracy_score, class_names=test_class_names)
     figure.savefig(path_confusion_mat)
@@ -407,19 +413,16 @@ def run_experiment(arguments, hyp_search=False):
     report = sklearn.metrics.classification_report(test_target, test_pred, target_names=test_class_names, digits=4)
 
 
-    if hyp_search:
-        try:
-            os.makedirs(path_model+ "/tested_" + test_labels_type)
-        except OSError:
-            pass
 
-        np.savez(path_model+ "/tested_" + test_labels_type +"/rep_and_histo.npz" , report=report, hist=history.history)
+    if hyp_search:
+
+        np.savez(path_saved_data+ "/rep_and_histo.npz" , report=report, hist=history.history)
 
         return f1_score, accuracy_score
     else:
         train_pred_raw = model.predict(x={'input_ids': x['input_ids'], 'attention_mask': x['attention_mask']}, verbose=1)
 
-        np.savez(path_saved_data, test_pred_raw=test_pred_raw, f1_score=f1_score, accuracy_score=accuracy_score,
+        np.savez( path_saved_data+  "/rep_and_histo.npz", test_pred_raw=test_pred_raw, f1_score=f1_score, accuracy_score=accuracy_score,
                  train_pred_raw=train_pred_raw, report=report, hist=history.history, train_class_names=train_class_names, test_class_names=test_class_names)
 
 def main():
