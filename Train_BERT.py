@@ -92,7 +92,7 @@ def append_test_label(test, arguments):
             else:
                 for cat in arg[::-1]:
                     file = np.load(cat, allow_pickle=True)
-                    labels_test = file['test_class_names'][file['rep_and_histo'].argmax(axis=1)]
+                    labels_test = file['test_class_names'][file['test_pred_raw'].argmax(axis=1)]
                     test['aux'] = labels_test
                     test['Text'] = test['aux'].str.cat(test['Text'], sep=". ")
 

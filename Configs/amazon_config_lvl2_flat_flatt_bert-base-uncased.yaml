@@ -1,7 +1,7 @@
 model_name: bert-base-uncased
 max_length: 100
 epochs: 60
-batch_size: 50
+batch_size: 40
 repetitions: 3
 data_path: amazon
 lvl: 2

@@ -2,7 +2,7 @@ model_name: bert-base-uncased
 max_length: 100
 epochs: 40
 batch_size: 40
-repetitions: 2
+repetitions: 1
 data_path: dbpedia
 lvl: 2
 # labels format: list of labels, i.e. [ label1, label2]

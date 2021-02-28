@@ -326,7 +326,7 @@ def main():
         elif conf == "pred_pred":
             print(list_args)
             hyp_search_lvl2_predicted_predicted(list_args[i + 1])
-            print("hyp_search_lvl2_target_target done")
+            print("hyp_search_lvl2_prediction_prediction done")
             print("#" * 150)
             print("#" * 150)
             print("#" * 150)
