@@ -1,9 +1,6 @@
 .ipynb_checkpoints/
-
 Old_Files/
 Old_runs/
-
-
 dbpedia/Data_analysis.svg
 dbpedia/test.csv
 dbpedia/train.csv
@@ -24,3 +21,6 @@ dbpedia/DBP_wiki_data.csv
 **/logs/
 **/model
 /dbpedia/val.csv
+/amazon/test.csv
+/amazon/train.csv
+/amazon/unlabeled.csv

@@ -36,6 +36,7 @@ def plot_confusion_matrix(cm, f1_score, accuracy_score, class_names):
         :param class_names: (array, shape = [n]): String names of the integer classes
         :param accuracy_score: accuracy score for plotting
         :param f1_score: f1_score score for plotting
+        :return figure
     """
     figure = plt.figure(figsize=(8, 8))
     plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
@@ -61,6 +62,12 @@ def plot_confusion_matrix(cm, f1_score, accuracy_score, class_names):
 
 
 def append_label(data, arguments):
+    """
+
+    :param data:
+    :param arguments:
+    :return:
+    """
     if arguments['labels'] is not None:
         for arg in arguments['labels']:
             if arg[0] == 'Target':
@@ -83,6 +90,13 @@ def append_label(data, arguments):
 
 
 def append_test_label(test, arguments):
+    """
+
+    :param test:
+    :param arguments:
+    :return:
+    """
+
     if arguments['test_labels'] is not None:
         for arg in arguments['test_labels']:
             if arg[0] == 'Target':

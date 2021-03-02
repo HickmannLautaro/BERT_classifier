@@ -2,7 +2,7 @@ model_name: bert-base-uncased
 max_length: 100
 epochs: 40
 batch_size: 40
-repetitions: 1
+repetitions: 3
 data_path: dbpedia
 lvl: 2
 # labels format: list of labels, i.e. [ label1, label2]
@@ -10,9 +10,9 @@ lvl: 2
 # label_i is for Target labels (direct from dataset): ['Target','Category name1', 'Category name2', 'Category name3']
 # label_i is for predicted labels: ['Path to saved predictions1','Path to saved predictions2',...,'Path to saved predictions n']
 # And combinations of both. The order will be label1. label2. Text where for label1 it adds all. e.g. label1: [lb1, lb2] then lb1. lb2. label2. Text.
-labels: [['saved_models/bert-base-uncased/dbpedia/lvl1/trained_flatt__/100T_20e/Run2/tested__/rep_and_histo.npz']]
+labels: [['saved_models/bert-base-uncased/dbpedia/lvl1/trained_flatt__/100T_20e_40b/Run2/tested__/rep_and_histo.npz']]
 # Same as labels but this are used for prediction, i.e. should not be target only predicted labels
-test_labels: [['saved_models/bert-base-uncased/dbpedia/lvl1/trained_flatt__/100T_20e/Run2/tested__/rep_and_histo.npz']]
+test_labels: [['saved_models/bert-base-uncased/dbpedia/lvl1/trained_flatt__/100T_20e_40b/Run2/tested__/rep_and_histo.npz']]
 hierar: hierarchical
 lable_type: Predicted
 test_labels_type: Predicted
