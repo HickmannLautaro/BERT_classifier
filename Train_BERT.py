@@ -347,6 +347,7 @@ def run_experiment(arguments, hyp_search=False):
     ### --------- Import data --------- ###
 
     data, train_class_names, target = get_data(arguments, hyp_search)
+
     ### --------- Load BERT ---------- ###
 
     # Load transformers config and set output_hidden_states to False
