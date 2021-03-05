@@ -6,7 +6,7 @@ import pandas as pd
 from IPython.display import display
 import yaml
 import tensorflow as tf
-import Train_BERT
+import BERT_per_lvl
 from transformers import  BertConfig, BertTokenizerFast
 from tqdm.notebook import tqdm
 import sklearn
@@ -545,8 +545,8 @@ def write_results(title, dataset, lvl, tokens, epochs, batch, test_labels, train
     model_name = arguments['model_name']
     config = BertConfig.from_pretrained(model_name)
     config.output_hidden_states = False
-    data, test_class_names, test_target = Train_BERT.get_test_data(arguments)
-    x = Train_BERT.get_tokenized(model_name, config, data, tokens)
+    data, test_class_names, test_target = BERT_per_lvl.get_test_data(arguments)
+    x = BERT_per_lvl.get_tokenized(model_name, config, data, tokens)
     runs = [filename for filename in glob.iglob(model + "/**/model", recursive=True)]
 
     res_list = []

@@ -1,0 +1,10 @@
+model_name: bert-base-uncased
+max_length: 100
+epochs: 60
+batch_size: 45
+repetitions: 2
+data_path: dbpedia
+lvl: 2
+hierar: hierarchical
+lable_type: per_label
+test_labels_type: _

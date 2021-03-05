@@ -2,7 +2,7 @@ import yaml
 import os
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = '2'
-from Train_BERT import run_experiment
+from BERT_per_lvl import run_experiment
 import tensorflow as tf
 from tensorboard.plugins.hparams import api as hp
 import numpy as np

@@ -15,7 +15,7 @@ from tensorflow.keras.utils import to_categorical
 # Load Huggingface transformers
 from transformers import BertConfig
 
-from Train_BERT import get_bert_model, get_tokenized, plot_confusion_matrix
+from BERT_per_lvl import get_bert_model, get_tokenized, plot_confusion_matrix
 
 
 def convert_data(data, lvl):
@@ -206,7 +206,7 @@ def train_per_label(arguments):
             dpi=96,
         )
 
-        print("Run finished: " + path)
+        print("Run finished: " + path + "/Class" + str(iter_num))
         # ----- Evaluate the model ------
         test_x = get_tokenized(model_name, config, test, max_length)
 
@@ -253,10 +253,8 @@ def main():
                  'repetitions': 1,
                  'data_path': 'dbpedia',
                  'lvl': 2,
-                 'labels': None,
-                 'test_labels': None,
                  'hierar': 'hierarchical',
-                 'lable_type': 'per label',
+                 'lable_type': 'per_label',
                  'test_labels_type': '_'}
     train_per_label(arguments)
 
