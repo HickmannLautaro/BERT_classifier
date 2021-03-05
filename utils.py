@@ -7,13 +7,15 @@ from IPython.display import display
 import yaml
 import tensorflow as tf
 import BERT_per_lvl
-from transformers import  BertConfig, BertTokenizerFast
+import BERT_per_label
+from transformers import BertConfig, BertTokenizerFast
 from tqdm.notebook import tqdm
 import sklearn
 
 
-#TODO Add docstrings
+# TODO Add docstrings
 
+# Data analysis
 def data_analysis(data_set):
     """
     Dataset analysis of occurrences and histograms of the training and test sets for
@@ -394,6 +396,8 @@ def data_analysis_fixed_len(data_set, max_len=100):
     plt.show()
 
 
+# Result table generator
+
 def pad(list_to_pad):
     lens = [len(a) for a in list_to_pad]
     aux = [np.pad(elem, (0, np.max(lens) - len(elem)), 'edge') for elem in list_to_pad]
@@ -424,7 +428,6 @@ def get_model_plot(model):
         except:
             histo_list_acc.append(np.array(arr['accu_list']))
             histo_list_f1.append(np.array(arr['f1_score_list']))
-
 
     plot_histo_list_acc = get_plot_values(histo_list_acc)
     plot_histo_list_f1 = get_plot_values(histo_list_f1)
@@ -476,6 +479,17 @@ def plot_curves(models):
     plt.show()
 
 
+def predict_per_label(path, input_ids, attention_mask, batch):
+    imported = tf.saved_model.load(path)
+    f = imported.signatures["serving_default"]
+    test_pred = np.array([])
+    top = input_ids.shape[0]
+    for i in range(batch, top + batch, batch):
+        test_pred = np.concatenate((test_pred, np.argmax(
+            f(input_ids=input_ids[i - batch:i], attention_mask=attention_mask[i - batch:i])['Cat'], axis=1)))
+    return test_pred
+
+
 def predict(path, x, batch, test_target):
     imported = tf.saved_model.load(path)
     f = imported.signatures["serving_default"]
@@ -519,6 +533,9 @@ def create_results(model):
             arguments = yaml.load(f, Loader=yaml.FullLoader)
         test_labels = arguments["test_labels"]  # path to test labels
         return write_results(title, dataset, lvl, tokens, epochs, batch, test_labels, train_in, test_in, model)
+    elif title.find("per_label") + 1:
+        return write_results_per_label(title, dataset, lvl, tokens, epochs, batch, model)
+
     else:
         train_in = add_cats("Target", lvl)
         conf = "./Configs/" + dataset + "_config_lvl" + str(lvl) + "_h_t_bert-base-uncased.yaml"
@@ -545,7 +562,7 @@ def write_results(title, dataset, lvl, tokens, epochs, batch, test_labels, train
     model_name = arguments['model_name']
     config = BertConfig.from_pretrained(model_name)
     config.output_hidden_states = False
-    data, test_class_names, test_target = BERT_per_lvl.get_test_data(arguments)
+    data, trunest_class_names, test_target = BERT_per_lvl.get_test_data(arguments)
     x = BERT_per_lvl.get_tokenized(model_name, config, data, tokens)
     runs = [filename for filename in glob.iglob(model + "/**/model", recursive=True)]
 
@@ -558,13 +575,12 @@ def write_results(title, dataset, lvl, tokens, epochs, batch, test_labels, train
     f1_string = '{:.3f}({:.3f})'.format(f1_mean, f1_std)
     acc_string = '{:.3f}({:.3f})'.format(accu_mean, accu_std)
     aux = ['-'] * 6
-    aux = ['-'] * 6
     aux[(lvl - 1) * 2] = acc_string
     aux[(lvl - 1) * 2 + 1] = f1_string
     _, _, leng, _ = get_model_plot(model)
-    used_ep=len(leng[0])
+    used_ep = len(leng[0])
 
-    table_data = [dataset, '{}({})'.format(epochs, used_ep), tokens, batch, len(runs), train_in, "Cat" + str(lvl),
+    table_data = ["Per_lvl",dataset, '{}({})'.format(epochs, used_ep), tokens, batch, len(runs), train_in, "Cat" + str(lvl),
                   test_in] + aux
     return table_data
 
@@ -573,9 +589,62 @@ def make_table(models):
     res = np.vstack([create_results(model) for model in tqdm(models)])
 
     df = pd.DataFrame(np.vstack(res),
-                      columns=["Dataset", "Epochs", "Tokens", "Batch size", "Runs", "Train Input", "Output",
+                      columns=["Type","Dataset", "Epochs", "Tokens", "Batch size", "Runs", "Train Input", "Output",
                                "Test Input", "Cat1 accuracy", "Cat1 F1 score macro", "Cat2 accuracy",
                                "Cat2 F1 score macro", "Cat3 accuracy", "Cat3 F1 score macro"])
     df = df.sort_values(by=['Dataset', 'Output', "Train Input", "Test Input"], ascending=[True, True, False, False])
 
     return df
+
+
+def get_scores(test_pred, model, batch, x, test_target, classes, runs, dataset, lvl, tokens, epochs, train_in, test_in):
+    score = []
+    for run in tqdm(range(1, runs + 1)):
+        pred = np.zeros(test_target.shape[0])
+        for label_class in range(classes):
+            indices_tf = [[i] for i, j in enumerate(test_pred) if j == label_class]
+            indices = np.where(test_pred == label_class)[0]
+            input_ids = tf.gather_nd(x['input_ids'], indices_tf)
+            attention_mask = tf.gather_nd(x['attention_mask'], indices_tf)
+            class_model = model + "/Run" + str(run) + "/Class" + str(label_class) + "/model"
+            class_pred = predict_per_label(class_model, input_ids, attention_mask, batch).astype(int)
+            mapping = np.load(model + "/Run" + str(run) + "/Class" + str(label_class) + "/tested__/rep_and_histo.npz")["test_mapping"].astype(int)
+            class_pred = mapping[class_pred]
+            pred[indices] = class_pred
+        f1_score = sklearn.metrics.f1_score(test_target, pred, average='macro')
+        accuracy_score = sklearn.metrics.accuracy_score(test_target, pred)
+        score.append([f1_score, accuracy_score])
+
+    f1_mean, accu_mean = np.mean(score, axis=0)
+    f1_std, accu_std = np.std(score, axis=0)
+    f1_string = '{:.3f}({:.3f})'.format(f1_mean, f1_std)
+    acc_string = '{:.3f}({:.3f})'.format(accu_mean, accu_std)
+    aux = ['-'] * 6
+    aux[(lvl - 1) * 2] = acc_string
+    aux[(lvl - 1) * 2 + 1] = f1_string
+
+    table_data = ["Per_label",dataset, epochs, tokens, batch, runs, train_in, "Cat" + str(lvl), test_in] + aux
+    return table_data
+
+
+def write_results_per_label(title, dataset, lvl, tokens, epochs, batch, model):
+    conf = "./Configs/" + dataset + "_config_lvl" + str(lvl) + "_per_label.yaml"
+    with open(conf) as f:
+        arguments = yaml.load(f, Loader=yaml.FullLoader)
+
+    train_in = "Text divided per Target Cat" + str(lvl-1)
+    test_in = "Text divided per Predicted Cat" + str(lvl-1)
+    test_model = arguments["test_model"]  # path to test labels
+    model_name = arguments['model_name']
+    config = BertConfig.from_pretrained(model_name)
+    config.output_hidden_states = False
+    data, class_names = BERT_per_label.get_upper_label_data(dataset, train=False)
+    x = BERT_per_lvl.get_tokenized(model_name, config, data, tokens)
+    runs = len([filename for filename in glob.iglob(model + "/**/Run*", recursive=True)])
+    classes = class_names[0].shape[0]
+    test_pred = [np.array(data["Cat1"].to_list()), predict_per_label(test_model, x['input_ids'], x['attention_mask'], batch)]
+    test_target = np.array(data["Cat2"].to_list())
+
+    target_in=get_scores(test_pred[0], model, batch, x, test_target, classes, runs, dataset, lvl, tokens, epochs, train_in, train_in)
+    test_in=get_scores(test_pred[1], model, batch, x, test_target, classes, runs, dataset, lvl, tokens, epochs, train_in, test_in)
+    return np.vstack((target_in,test_in))

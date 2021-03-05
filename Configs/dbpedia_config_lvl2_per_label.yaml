@@ -5,6 +5,7 @@ batch_size: 45
 repetitions: 2
 data_path: dbpedia
 lvl: 2
+test_model: 'saved_models/bert-base-uncased/dbpedia/lvl1/trained_flatt__/100T_20e_40b/Run2/model'
 hierar: hierarchical
 lable_type: per_label
 test_labels_type: _
