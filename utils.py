@@ -534,8 +534,10 @@ def create_results(model):
         test_labels = arguments["test_labels"]  # path to test labels
         return write_results(title, dataset, lvl, tokens, epochs, batch, test_labels, train_in, test_in, model)
     elif title.find("per_label") + 1:
-        return write_results_per_label(title, dataset, lvl, tokens, epochs, batch, model)
-
+        if lvl==2:
+            return write_results_per_label(title, dataset, lvl, tokens, epochs, batch, model)
+        else:
+            pass #TODO make function to evaluate 3 cats
     else:
         train_in = add_cats("Target", lvl)
         conf = "./Configs/" + dataset + "_config_lvl" + str(lvl) + "_h_t_bert-base-uncased.yaml"
@@ -635,15 +637,18 @@ def write_results_per_label(title, dataset, lvl, tokens, epochs, batch, model):
     train_in = "Text divided per Target Cat" + str(lvl-1)
     test_in = "Text divided per Predicted Cat" + str(lvl-1)
     test_model = arguments["test_model"]  # path to test labels
+
     model_name = arguments['model_name']
     config = BertConfig.from_pretrained(model_name)
     config.output_hidden_states = False
-    data, class_names = BERT_per_label.get_upper_label_data(dataset, train=False)
+    data, class_names = BERT_per_label.get_upper_label_data(dataset, False, lvl)
     x = BERT_per_lvl.get_tokenized(model_name, config, data, tokens)
     runs = len([filename for filename in glob.iglob(model + "/**/Run*", recursive=True)])
     classes = class_names[0].shape[0]
-    test_pred = [np.array(data["Cat1"].to_list()), predict_per_label(test_model, x['input_ids'], x['attention_mask'], batch)]
-    test_target = np.array(data["Cat2"].to_list())
+    cat_num = str('Cat' + str(lvl - 1))
+    cat_num_desired = str('Cat' + str(lvl))
+    test_pred = [np.array(data[cat_num].to_list()), predict_per_label(test_model, x['input_ids'], x['attention_mask'], batch)]
+    test_target = np.array(data[cat_num_desired].to_list())
 
     target_in=get_scores(test_pred[0], model, batch, x, test_target, classes, runs, dataset, lvl, tokens, epochs, train_in, train_in)
     test_in=get_scores(test_pred[1], model, batch, x, test_target, classes, runs, dataset, lvl, tokens, epochs, train_in, test_in)

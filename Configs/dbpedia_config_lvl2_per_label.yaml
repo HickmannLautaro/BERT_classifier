@@ -2,7 +2,7 @@ model_name: bert-base-uncased
 max_length: 100
 epochs: 60
 batch_size: 45
-repetitions: 2
+repetitions: 1
 data_path: dbpedia
 lvl: 2
 test_model: 'saved_models/bert-base-uncased/dbpedia/lvl1/trained_flatt__/100T_20e_40b/Run2/model'

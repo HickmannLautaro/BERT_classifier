@@ -26,7 +26,7 @@ def convert_data(data, lvl):
     return data, np.unique(data[cat_label])
 
 
-def get_upper_label_data(data_path, train=True):
+def get_upper_label_data(data_path, train,lvl):
 
     # Import data from csv
     if train:
@@ -35,18 +35,21 @@ def get_upper_label_data(data_path, train=True):
         data = pd.read_csv(data_path + "/test.csv")
 
     data = data.rename(columns={"text": "Text", "l1": "Cat1", "l2": "Cat2", "l3": "Cat3"})
-    data = data[['Text', "Cat1", "Cat2"]]
+    if lvl == 3:
+        data = data[['Text', "Cat1", "Cat2", "Cat3"]]
+    else:
+        data = data[['Text', "Cat1", "Cat2"]]
     class_names = []
 
     # Training data
     # Set model output as categorical and save in new label col
-    for lvl in [1, 2]:
+    for lvl in range(1,lvl+1):
         data, names = convert_data(data, lvl)
         class_names.append(names)
     return data, class_names
 
 
-def get_data_per_sub_label(data_path,train=True):
+def get_data_per_sub_label(data_path,train, lvl):
 
     # Import data from csv
     if train:
@@ -55,32 +58,39 @@ def get_data_per_sub_label(data_path,train=True):
         data = pd.read_csv(data_path + "/test.csv")
 
     data = data.rename(columns={"text": "Text", "l1": "Cat1", "l2": "Cat2", "l3": "Cat3"})
-    data = data[['Text', "Cat1", "Cat2"]]
+    if lvl == 3:
+        data = data[['Text', "Cat1", "Cat2", "Cat3"]]
+    else:
+        data = data[['Text', "Cat1", "Cat2"]]
     class_names = []
 
     # Training data
     # Set model output as categorical and save in new label col
-    for lvl in [1]:
-        data, names = convert_data(data, lvl)
-        class_names.append(names)
+    data, names = convert_data(data, lvl-1)
+    cat_num = str('Cat' + str(lvl-1))
+    cat_num_desired = str('Cat' + str(lvl))
 
-    return [data[data["Cat1"] == i][["Text", "Cat2"]] for i in range(class_names[0].shape[0])]
+    class_names.append(names)
+
+    return [data[data[cat_num] == i][["Text", cat_num_desired]] for i in range(class_names[0].shape[0])]
 
 
-def get_mapping(per_cat1_data, original_data):
-    aux, aux_names = convert_data(per_cat1_data, 2)
+def get_mapping(per_cat_data, original_data, lvl):
+    cat_num = str('Cat' + str(lvl))
+    cat_label = str(cat_num + '_label')
+    aux, aux_names = convert_data(per_cat_data, lvl)
     mapping = np.ones(len(aux_names)) * -1
     class_name = aux_names[0]
     for class_name in aux_names:
-        mapping[aux[aux["Cat2_label"] == class_name][["Cat2"]].drop_duplicates()] = \
-            original_data[original_data["Cat2_label"] == class_name][["Cat2"]].drop_duplicates()
+        mapping[aux[aux[cat_label] == class_name][[cat_num]].drop_duplicates()] = \
+            original_data[original_data[cat_label] == class_name][[cat_num]].drop_duplicates()
     return mapping
 
 
-def get_data_and_mapp_per_sub_label(data_path,train=True):
-    per_cat1_data = get_data_per_sub_label(data_path,train)
-    original_data, original_class_names = get_upper_label_data(data_path, train)
-    return [[sub_cat1_data, get_mapping(sub_cat1_data, original_data)] for sub_cat1_data in per_cat1_data]
+def get_data_and_mapp_per_sub_label(data_path,lvl, train=True):
+    per_cat_data = get_data_per_sub_label(data_path,train, lvl)
+    original_data, original_class_names = get_upper_label_data(data_path, train, lvl)
+    return [[sub_cat_data, get_mapping(sub_cat_data, original_data, lvl)] for sub_cat_data in per_cat_data]
 
 
 def train_per_label(arguments):
@@ -125,9 +135,9 @@ def train_per_label(arguments):
     print("Run started: " + path)
 
     ### --------- Import data --------- ###
-    per_cat1_data = [[data[0], np.unique(data[0]["Cat2_label"]), to_categorical(data[0]["Cat2"]), data[1]] for data in get_data_and_mapp_per_sub_label(data_path)]
-    per_cat1_data_test = [[data[0], np.unique(data[0]["Cat2_label"]), to_categorical(data[0]["Cat2"]), data[1]] for data in get_data_and_mapp_per_sub_label(data_path, train=False)]
-    for iter_num, per_cat1_data_iter in enumerate(zip(per_cat1_data, per_cat1_data_test)):
+    per_cat_data = [[data[0], np.unique(data[0]["Cat2_label"]), to_categorical(data[0]["Cat2"]), data[1]] for data in get_data_and_mapp_per_sub_label(data_path, lvl)]
+    per_cat_data_test = [[data[0], np.unique(data[0]["Cat2_label"]), to_categorical(data[0]["Cat2"]), data[1]] for data in get_data_and_mapp_per_sub_label(data_path, lvl, train=False)]
+    for iter_num, per_cat_data_iter in enumerate(zip(per_cat_data, per_cat_data_test)):
 
         path_model = "./saved_models" + path + "/Class" + str(iter_num)
 
@@ -157,8 +167,8 @@ def train_per_label(arguments):
               "\n \nPlots dir:" + path_model_plot +
               "\n \nSaved data dir:" + path_saved_data)
 
-        data, train_class_names, target, train_mapping = per_cat1_data_iter[0]
-        test, test_class_names, test_target, test_mapping = per_cat1_data_iter[1]
+        data, train_class_names, target, train_mapping = per_cat_data_iter[0]
+        test, test_class_names, test_target, test_mapping = per_cat_data_iter[1]
 
         ### --------- Load BERT ---------- ###
 

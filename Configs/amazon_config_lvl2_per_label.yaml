@@ -2,7 +2,7 @@ model_name: bert-base-uncased
 max_length: 100
 epochs: 60
 batch_size: 45
-repetitions: 2
+repetitions: 3
 data_path: amazon
 lvl: 2
 test_model: 'saved_models/bert-base-uncased/amazon/lvl1/trained_flatt__/100T_60e_45b/Run3/model'

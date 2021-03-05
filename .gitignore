@@ -20,6 +20,8 @@ dbpedia/DBP_wiki_data.csv
 **/checkpoint/
 **/logs/
 **/model
+**/rep_and_histo.npz
+
 /dbpedia/val.csv
 /amazon/test.csv
 /amazon/train.csv
