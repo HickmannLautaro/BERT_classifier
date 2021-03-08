@@ -1,0 +1,5 @@
+Dbpedia downloaded from https://www.kaggle.com/danofer/dbpedia-classes?select=DBPEDIA_train.csv
+Rename DBPEDIA_test.csv to test.csv
+Rename DBPEDIA_train.csv to train.csv
+
+The rest of the files are not needed.

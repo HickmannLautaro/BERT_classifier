@@ -1,12 +1,6 @@
 .ipynb_checkpoints/
-Old_Files/
-Old_runs/
-dbpedia/Data_analysis.svg
-dbpedia/test.csv
-dbpedia/train.csv
-dbpedia/DBP_wiki_data.csv
-.idea/
 .virtual_documents
+.idea/
 # Default ignored files
 .idea/shelf/
 .idea/workspace.xml
@@ -16,13 +10,3 @@ dbpedia/DBP_wiki_data.csv
 # Editor-based HTTP Client requests
 .idea/httpRequests/
 
-
-**/checkpoint/
-**/logs/
-**/model
-**/rep_and_histo.npz
-
-/dbpedia/val.csv
-/amazon/test.csv
-/amazon/train.csv
-/amazon/unlabeled.csv

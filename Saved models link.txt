@@ -1,0 +1,4 @@
+A selection of saved models can be downloaded from:
+https://drive.google.com/drive/folders/1G6O1dA5eqEJKgMOYelBAb0chpVXo7Pq_?usp=sharing
+Add the "saved_models" folder to the root of this project, i.e. here to be able to use it without changing paths
+

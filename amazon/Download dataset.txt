@@ -1,0 +1,5 @@
+Amazon downloaded from https://www.kaggle.com/kashnitsky/hierarchical-text-classification
+Rename train_40k.csv to train.csv
+Rename unlabeled_150k.csv to test.csv
+
+The rest of the files are not needed.
