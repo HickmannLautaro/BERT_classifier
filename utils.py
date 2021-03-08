@@ -598,9 +598,12 @@ def make_table(models):
     return df
 
 
-def get_scores(test_pred, model, batch, x, test_target, classes, runs, dataset, lvl, tokens, epochs, train_in, test_in, prediction_only=False):
+def get_scores(test_pred, model, batch, x, test_target, classes, runs, dataset, lvl, tokens, epochs, train_in, test_in, prediction_only=False, intermediate=False):
     score = []
-    for run in range(1, runs + 1):
+    start=1
+    if intermediate:
+        start=2
+    for run in range(2, runs + 1):
         pred = np.zeros(test_target.shape[0])
         for label_class in range(classes):
             indices_tf = [[i] for i, j in enumerate(test_pred) if j == label_class]
@@ -651,7 +654,7 @@ def write_results_per_label(title, dataset, lvl, tokens, epochs, batch, model):
     if lvl == 3:
         second_test_model = arguments['test_model_lvl2']
         classes_for_intermediate=class_names[lvl-3].shape[0]
-        predicted_in = get_scores(predicted_in, second_test_model, batch, x, np.array(data[str('Cat' + str(lvl - 1))].to_list()),classes_for_intermediate , 1, dataset, lvl - 1, tokens, epochs, train_in, train_in, True)
+        predicted_in = get_scores(predicted_in, second_test_model, batch, x, np.array(data[str('Cat' + str(lvl - 1))].to_list()),classes_for_intermediate , 2, dataset, lvl - 1, tokens, epochs, train_in, train_in, True)
     test_pred = [np.array(data[cat_num].to_list()), predicted_in]
     test_target = np.array(data[cat_num_desired].to_list())
     target_in = get_scores(test_pred[0], model, batch, x, test_target, classes, runs, dataset, lvl, tokens, epochs, train_in, train_in)
