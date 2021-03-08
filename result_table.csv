@@ -14,6 +14,8 @@ Per_lvl,dbpedia,40(40),100,40,3,Text,Cat2,Text,-,-,0.975(0.000),0.968(0.001),-,-
 Per_lvl,dbpedia,40(40),100,40,3,"Target Cat1, Text",Cat2,"Target Cat1, Text",-,-,0.979(0.000),0.975(0.001),-,-
 Per_lvl,dbpedia,40(40),100,40,3,"Target Cat1, Text",Cat2,"Predicted Cat1, Text",-,-,0.976(0.000),0.970(0.001),-,-
 Per_lvl,dbpedia,40(40),100,40,3,"Predicted Cat1, Text",Cat2,"Predicted Cat1, Text",-,-,0.976(0.000),0.969(0.001),-,-
+Per_label,dbpedia,60,100,45,3,Text divided per Target Cat2,Cat3,Text divided per Target Cat2,-,-,-,-,0.983(0.000),0.982(0.000)
+Per_label,dbpedia,60,100,45,3,Text divided per Target Cat2,Cat3,Text divided per Predicted Cat2,-,-,-,-,0.962(0.000),0.957(0.000)
 Per_lvl,dbpedia,40(40),100,40,3,Text,Cat3,Text,-,-,-,-,0.951(0.001),0.918(0.007)
 Per_lvl,dbpedia,40(40),100,40,3,"Target Cat1, Cat2, Text",Cat3,"Target Cat1, Cat2, Text",-,-,-,-,0.975(0.001),0.954(0.003)
 Per_lvl,dbpedia,40(40),100,40,3,"Target Cat1, Cat2, Text",Cat3,"Predicted Cat1, Cat2, Text",-,-,-,-,0.954(0.001),0.931(0.003)

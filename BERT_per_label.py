@@ -135,8 +135,10 @@ def train_per_label(arguments):
     print("Run started: " + path)
 
     ### --------- Import data --------- ###
-    per_cat_data = [[data[0], np.unique(data[0]["Cat2_label"]), to_categorical(data[0]["Cat2"]), data[1]] for data in get_data_and_mapp_per_sub_label(data_path, lvl)]
-    per_cat_data_test = [[data[0], np.unique(data[0]["Cat2_label"]), to_categorical(data[0]["Cat2"]), data[1]] for data in get_data_and_mapp_per_sub_label(data_path, lvl, train=False)]
+    cat_num = str('Cat' + str(lvl))
+    cat_label = str(cat_num + '_label')
+    per_cat_data = [[data[0], np.unique(data[0][cat_label]), to_categorical(data[0][cat_num]), data[1]] for data in get_data_and_mapp_per_sub_label(data_path, lvl)]
+    per_cat_data_test = [[data[0], np.unique(data[0][cat_label]), to_categorical(data[0][cat_num]), data[1]] for data in get_data_and_mapp_per_sub_label(data_path, lvl, train=False)]
     for iter_num, per_cat_data_iter in enumerate(zip(per_cat_data, per_cat_data_test)):
 
         path_model = "./saved_models" + path + "/Class" + str(iter_num)

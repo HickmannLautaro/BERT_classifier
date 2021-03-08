@@ -442,7 +442,7 @@ def plot_curves(models):
     spec = gridspec.GridSpec(ncols=2, nrows=1, figure=fig)
     lines = ["", '-', '--', ':']
     max_len = 0
-    fig.suptitle("Training data validation curves")
+    fig.suptitle("Validation curves while Training")
     fig.add_subplot(spec[0, 0])
 
     for model in models:
@@ -475,6 +475,7 @@ def plot_curves(models):
     plt.grid()
     plt.xticks(range(1, max_len + 1, 2))
     plt.title("mean accuracy score with confidence")
+    plt.savefig("./visualizations/trainig_curves.png", dpi=200, format="png", facecolor="white")
 
     plt.show()
 
@@ -534,10 +535,8 @@ def create_results(model):
         test_labels = arguments["test_labels"]  # path to test labels
         return write_results(title, dataset, lvl, tokens, epochs, batch, test_labels, train_in, test_in, model)
     elif title.find("per_label") + 1:
-        if lvl==2:
-            return write_results_per_label(title, dataset, lvl, tokens, epochs, batch, model)
-        else:
-            pass #TODO make function to evaluate 3 cats
+        return write_results_per_label(title, dataset, lvl, tokens, epochs, batch, model)
+
     else:
         train_in = add_cats("Target", lvl)
         conf = "./Configs/" + dataset + "_config_lvl" + str(lvl) + "_h_t_bert-base-uncased.yaml"
@@ -569,7 +568,7 @@ def write_results(title, dataset, lvl, tokens, epochs, batch, test_labels, train
     runs = [filename for filename in glob.iglob(model + "/**/model", recursive=True)]
 
     res_list = []
-    for run in tqdm(runs):
+    for run in runs:
         res_list.append(predict(run, x, batch, test_target))  # f1_score, accuracy_score
 
     f1_mean, accu_mean = np.mean(res_list, axis=0)
@@ -582,7 +581,7 @@ def write_results(title, dataset, lvl, tokens, epochs, batch, test_labels, train
     _, _, leng, _ = get_model_plot(model)
     used_ep = len(leng[0])
 
-    table_data = ["Per_lvl",dataset, '{}({})'.format(epochs, used_ep), tokens, batch, len(runs), train_in, "Cat" + str(lvl),
+    table_data = ["Per_lvl", dataset, '{}({})'.format(epochs, used_ep), tokens, batch, len(runs), train_in, "Cat" + str(lvl),
                   test_in] + aux
     return table_data
 
@@ -591,7 +590,7 @@ def make_table(models):
     res = np.vstack([create_results(model) for model in tqdm(models)])
 
     df = pd.DataFrame(np.vstack(res),
-                      columns=["Type","Dataset", "Epochs", "Tokens", "Batch size", "Runs", "Train Input", "Output",
+                      columns=["Type", "Dataset", "Epochs", "Tokens", "Batch size", "Runs", "Train Input", "Output",
                                "Test Input", "Cat1 accuracy", "Cat1 F1 score macro", "Cat2 accuracy",
                                "Cat2 F1 score macro", "Cat3 accuracy", "Cat3 F1 score macro"])
     df = df.sort_values(by=['Dataset', 'Output', "Train Input", "Test Input"], ascending=[True, True, False, False])
@@ -599,9 +598,9 @@ def make_table(models):
     return df
 
 
-def get_scores(test_pred, model, batch, x, test_target, classes, runs, dataset, lvl, tokens, epochs, train_in, test_in):
+def get_scores(test_pred, model, batch, x, test_target, classes, runs, dataset, lvl, tokens, epochs, train_in, test_in, prediction_only=False):
     score = []
-    for run in tqdm(range(1, runs + 1)):
+    for run in range(1, runs + 1):
         pred = np.zeros(test_target.shape[0])
         for label_class in range(classes):
             indices_tf = [[i] for i, j in enumerate(test_pred) if j == label_class]
@@ -616,7 +615,8 @@ def get_scores(test_pred, model, batch, x, test_target, classes, runs, dataset, 
         f1_score = sklearn.metrics.f1_score(test_target, pred, average='macro')
         accuracy_score = sklearn.metrics.accuracy_score(test_target, pred)
         score.append([f1_score, accuracy_score])
-
+    if prediction_only:
+        return pred
     f1_mean, accu_mean = np.mean(score, axis=0)
     f1_std, accu_std = np.std(score, axis=0)
     f1_string = '{:.3f}({:.3f})'.format(f1_mean, f1_std)
@@ -625,7 +625,7 @@ def get_scores(test_pred, model, batch, x, test_target, classes, runs, dataset, 
     aux[(lvl - 1) * 2] = acc_string
     aux[(lvl - 1) * 2 + 1] = f1_string
 
-    table_data = ["Per_label",dataset, epochs, tokens, batch, runs, train_in, "Cat" + str(lvl), test_in] + aux
+    table_data = ["Per_label", dataset, epochs, tokens, batch, runs, train_in, "Cat" + str(lvl), test_in] + aux
     return table_data
 
 
@@ -634,9 +634,9 @@ def write_results_per_label(title, dataset, lvl, tokens, epochs, batch, model):
     with open(conf) as f:
         arguments = yaml.load(f, Loader=yaml.FullLoader)
 
-    train_in = "Text divided per Target Cat" + str(lvl-1)
-    test_in = "Text divided per Predicted Cat" + str(lvl-1)
-    test_model = arguments["test_model"]  # path to test labels
+    train_in = "Text divided per Target Cat" + str(lvl - 1)
+    test_in = "Text divided per Predicted Cat" + str(lvl - 1)
+    test_model = arguments["test_model_lvl1"]  # path to test labels
 
     model_name = arguments['model_name']
     config = BertConfig.from_pretrained(model_name)
@@ -644,12 +644,16 @@ def write_results_per_label(title, dataset, lvl, tokens, epochs, batch, model):
     data, class_names = BERT_per_label.get_upper_label_data(dataset, False, lvl)
     x = BERT_per_lvl.get_tokenized(model_name, config, data, tokens)
     runs = len([filename for filename in glob.iglob(model + "/**/Run*", recursive=True)])
-    classes = class_names[0].shape[0]
+    classes = class_names[lvl-2].shape[0]
     cat_num = str('Cat' + str(lvl - 1))
     cat_num_desired = str('Cat' + str(lvl))
-    test_pred = [np.array(data[cat_num].to_list()), predict_per_label(test_model, x['input_ids'], x['attention_mask'], batch)]
+    predicted_in = predict_per_label(test_model, x['input_ids'], x['attention_mask'], batch)
+    if lvl == 3:
+        second_test_model = arguments['test_model_lvl2']
+        classes_for_intermediate=class_names[lvl-3].shape[0]
+        predicted_in = get_scores(predicted_in, second_test_model, batch, x, np.array(data[str('Cat' + str(lvl - 1))].to_list()),classes_for_intermediate , 1, dataset, lvl - 1, tokens, epochs, train_in, train_in, True)
+    test_pred = [np.array(data[cat_num].to_list()), predicted_in]
     test_target = np.array(data[cat_num_desired].to_list())
-
-    target_in=get_scores(test_pred[0], model, batch, x, test_target, classes, runs, dataset, lvl, tokens, epochs, train_in, train_in)
-    test_in=get_scores(test_pred[1], model, batch, x, test_target, classes, runs, dataset, lvl, tokens, epochs, train_in, test_in)
-    return np.vstack((target_in,test_in))
+    target_in = get_scores(test_pred[0], model, batch, x, test_target, classes, runs, dataset, lvl, tokens, epochs, train_in, train_in)
+    test_in = get_scores(test_pred[1], model, batch, x, test_target, classes, runs, dataset, lvl, tokens, epochs, train_in, test_in)
+    return np.vstack((target_in, test_in))
