@@ -17,6 +17,7 @@ from transformers import BertConfig
 
 from BERT_per_lvl import get_bert_model, get_tokenized, plot_confusion_matrix
 
+# TODO Add docstrings
 
 def convert_data(data, lvl):
     cat_num = str('Cat' + str(lvl))

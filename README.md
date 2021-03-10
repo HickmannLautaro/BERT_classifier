@@ -1,3 +1,4 @@
+[//]: # (TODO REDO)
 # BERT for hierarchicla text classification on a dataset with Amazon product reviews
 Using the pretrained bert-base-uncased form [Hugging Face](https://huggingface.co/bert-base-uncased)   
 
@@ -10,52 +11,108 @@ The training set contains 40k documents and the test set 10k.
 Each document contains: Title, Text, Cat1, Cat2, Cat3  
 ## Model architectures
 
-### All at once (Not used anymore)
-![all_classses](./visualizations/3clases.svg)
-
 ### Hierarchical
-![hierarchical](./visualizations/hierarchical.svg)
+![hierarchical](./visualizations/hierarchical.png)
 
 
 ## Newest results
 ## Only predicted results
-| Type      | Dataset   | Epochs   | Tokens   | Batch size   | Runs   | Train Input                  | Output   | Test Input                      | Cat1 accuracy   | Cat1 F1 score macro   | Cat2 accuracy   | Cat2 F1 score macro   | Cat3 accuracy   | Cat3 F1 score macro   |
-|:----------|:----------|:---------|:---------|:-------------|:-------|:-----------------------------|:---------|:--------------------------------|:----------------|:----------------------|:----------------|:----------------------|:----------------|:----------------------|
-| Per_lvl   | amazon    | 60(10)   | 100      | 45           | 3      | Text                         | Cat1     | Text                            | 0.828(0.002)    | 0.819(0.002)          | -               | -                     | -               | -                     |
-| Per_lvl   | amazon    | 60(53)   | 100      | 40           | 3      | Text                         | Cat2     | Text                            | -               | -                     | 0.622(0.003)    | 0.393(0.004)          | -               | -                     |
-| Per_lvl   | amazon    | 60(60)   | 100      | 45           | 3      | Target Cat1, Text            | Cat2     | Predicted Cat1, Text            | -               | -                     | 0.612(0.000)    | 0.400(0.002)          | -               | -                     |
-| Per_lvl   | amazon    | 60(60)   | 100      | 45           | 3      | Predicted Cat1, Text         | Cat2     | Predicted Cat1, Text            | -               | -                     | 0.624(0.002)    | 0.398(0.002)          | -               | -                     |
-| Per_label | amazon    | 60       | 100      | 45           | 3      | Text divided per Target Cat1 | Cat2     | Text divided per Predicted Cat1 | -               | -                     | 0.624(0.000)    | 0.474(0.005)          | -               | -                     |
-| ---       | ---       | ---      | ---      | ---          | ---    | ---                          | ---      | ---                             | ---             | ---                   | ---             | ---                   | ---             | ---                   |
-| Per_lvl   | dbpedia   | 20(20)   | 100      | 40           | 3      | Text                         | Cat1     | Text                            | 0.996(0.000)    | 0.994(0.000)          | -               | -                     | -               | -                     |
-| Per_lvl   | dbpedia   | 40(40)   | 100      | 40           | 3      | Text                         | Cat2     | Text                            | -               | -                     | 0.975(0.000)    | 0.968(0.001)          | -               | -                     |
-| Per_lvl   | dbpedia   | 40(40)   | 100      | 40           | 3      | Target Cat1, Text            | Cat2     | Predicted Cat1, Text            | -               | -                     | 0.976(0.000)    | 0.970(0.001)          | -               | -                     |
-| Per_lvl   | dbpedia   | 40(40)   | 100      | 40           | 3      | Predicted Cat1, Text         | Cat2     | Predicted Cat1, Text            | -               | -                     | 0.976(0.000)    | 0.969(0.001)          | -               | -                     |
-| Per_label | dbpedia   | 60       | 100      | 45           | 3      | Text divided per Target Cat1 | Cat2     | Text divided per Predicted Cat1 | -               | -                     | 0.977(0.000)    | 0.972(0.001)          | -               | -                     |
-| Per_lvl   | dbpedia   | 40(40)   | 100      | 40           | 3      | Text                         | Cat3     | Text                            | -               | -                     | -               | -                     | 0.951(0.001)    | 0.918(0.007)          |
-| Per_lvl   | dbpedia   | 40(40)   | 100      | 40           | 3      | Target Cat1, Cat2, Text      | Cat3     | Predicted Cat1, Cat2, Text      | -               | -                     | -               | -                     | 0.954(0.001)    | 0.931(0.003)          |
-| Per_lvl   | dbpedia   | 40(40)   | 100      | 40           | 3      | Predicted Cat1, Cat2, Text   | Cat3     | Predicted Cat1, Cat2, Text      | -               | -                     | -               | -                     | 0.953(0.001)    | 0.922(0.005)          |
-| Per_label | dbpedia   | 60       | 100      | 45           | 3      | Text divided per Target Cat2 | Cat3     | Text divided per Predicted Cat2 | -               | -                     | -               | -                     | 0.962(0.000)    | 0.957(0.000)          |
+In all cases as average of $3$ runs for $100$ Tokens
+
+| Dataset   | Type      | Epochs   | Batch size| Train Input                  | Output   | Test Input                      | Cat1 accuracy   | Cat1 F1 score macro   | Cat2 accuracy   | Cat2 F1 score macro   | Cat3 accuracy   | Cat3 F1 score macro   |
+|:----------|:----------|:---------|:----------|:-----------------------------|:---------|:--------------------------------|:----------------|:----------------------|:----------------|:----------------------|:----------------|:----------------------|
+| amazon    | Per_lvl   | 60(10)   | 45        | Text                         | Cat1     | Text                            | 0.828(0.002)    | 0.819(0.002)          | -               | -                     | -               | -                     |
+| amazon    | Per_lvl   | 60(53)   | 40        | Text                         | Cat2     | Text                            | -               | -                     | 0.622(0.003)    | 0.393(0.004)          | -               | -                     |
+| amazon    | Per_lvl   | 60(60)   | 45        | Target Cat1, Text            | Cat2     | Predicted Cat1, Text            | -               | -                     | 0.612(0.000)    | 0.400(0.002)          | -               | -                     |
+| amazon    | Per_lvl   | 60(60)   | 45        | Predicted Cat1, Text         | Cat2     | Predicted Cat1, Text            | -               | -                     | 0.624(0.002)    | 0.398(0.002)          | -               | -                     |
+| amazon    | Per_label | 60       | 45        | Text divided per Target Cat1 | Cat2     | Text divided per Predicted Cat1 | -               | -                     | 0.624(0.000)    | 0.474(0.005)          | -               | -                     |
+| ---       | --------- | ---      | ---       | ---                          | ---      | ---                             | ---             | ---                   | ---             | ---                   | ---             | ---                   |
+| dbpedia   | Per_lvl   | 20(20)   | 40        | Text                         | Cat1     | Text                            | 0.996(0.000)    | 0.994(0.000)          | -               | -                     | -               | -                     |
+| dbpedia   | Per_lvl   | 40(40)   | 40        | Text                         | Cat2     | Text                            | -               | -                     | 0.975(0.000)    | 0.968(0.001)          | -               | -                     |
+| dbpedia   | Per_lvl   | 40(40)   | 40        | Target Cat1, Text            | Cat2     | Predicted Cat1, Text            | -               | -                     | 0.976(0.000)    | 0.970(0.001)          | -               | -                     |
+| dbpedia   | Per_lvl   | 40(40)   | 40        | Predicted Cat1, Text         | Cat2     | Predicted Cat1, Text            | -               | -                     | 0.976(0.000)    | 0.969(0.001)          | -               | -                     |
+| dbpedia   | Per_label | 60       | 45        | Text divided per Target Cat1 | Cat2     | Text divided per Predicted Cat1 | -               | -                     | 0.977(0.000)    | 0.972(0.001)          | -               | -                     |
+| dbpedia   | Per_lvl   | 40(40)   | 40        | Text                         | Cat3     | Text                            | -               | -                     | -               | -                     | 0.951(0.001)    | 0.918(0.007)          |
+| dbpedia   | Per_lvl   | 40(40)   | 40        | Target Cat1, Cat2, Text      | Cat3     | Predicted Cat1, Cat2, Text      | -               | -                     | -               | -                     | 0.954(0.001)    | 0.931(0.003)          |
+| dbpedia   | Per_lvl   | 40(40)   | 40        | Predicted Cat1, Cat2, Text   | Cat3     | Predicted Cat1, Cat2, Text      | -               | -                     | -               | -                     | 0.953(0.001)    | 0.922(0.005)          |
+| dbpedia   | Per_label | 60       | 45        | Text divided per Target Cat2 | Cat3     | Text divided per Predicted Cat2 | -               | -                     | -               | -                     | 0.962(0.000)    | 0.957(0.000)          |
+
+
+| Dataset   | Type      | Epochs   | Batch size| Train Input                  | Output   | Test Input                      | Cat accuracy    | Cat F1 score macro    |
+|:----------|:----------|:---------|:----------|:-----------------------------|:---------|:--------------------------------|:----------------|:----------------------|
+| amazon    | Per_lvl   | 60(10)   | 45        | Text                         | Cat1     | Text                            | 0.828(0.002)    | 0.819(0.002)          |
+| amazon    | Per_lvl   | 60(53)   | 40        | Text                         | Cat2     | Text                            | 0.622(0.003)    | 0.393(0.004)          |
+| amazon    | Per_lvl   | 60(60)   | 45        | Target Cat1, Text            | Cat2     | Predicted Cat1, Text            | 0.612(0.000)    | 0.400(0.002)          |
+| amazon    | Per_lvl   | 60(60)   | 45        | Predicted Cat1, Text         | Cat2     | Predicted Cat1, Text            | 0.624(0.002)    | 0.398(0.002)          |
+| amazon    | Per_label | 60       | 45        | Text divided per Target Cat1 | Cat2     | Text divided per Predicted Cat1 | 0.624(0.000)    | 0.474(0.005)          |
+| ---       | --------- | ---      | ---       | ---                          | ---      | ---                             | ---             | ---                   |
+| dbpedia   | Per_lvl   | 20(20)   | 40        | Text                         | Cat1     | Text                            | 0.996(0.000)    | 0.994(0.000)          |
+| dbpedia   | Per_lvl   | 40(40)   | 40        | Text                         | Cat2     | Text                            | 0.975(0.000)    | 0.968(0.001)          |
+| dbpedia   | Per_lvl   | 40(40)   | 40        | Target Cat1, Text            | Cat2     | Predicted Cat1, Text            | 0.976(0.000)    | 0.970(0.001)          |
+| dbpedia   | Per_lvl   | 40(40)   | 40        | Predicted Cat1, Text         | Cat2     | Predicted Cat1, Text            | 0.976(0.000)    | 0.969(0.001)          |
+| dbpedia   | Per_label | 60       | 45        | Text divided per Target Cat1 | Cat2     | Text divided per Predicted Cat1 | 0.977(0.000)    | 0.972(0.001)          |
+| dbpedia   | Per_lvl   | 40(40)   | 40        | Text                         | Cat3     | Text                            | 0.951(0.001)    | 0.918(0.007)          |
+| dbpedia   | Per_lvl   | 40(40)   | 40        | Target Cat1, Cat2, Text      | Cat3     | Predicted Cat1, Cat2, Text      | 0.954(0.001)    | 0.931(0.003)          |
+| dbpedia   | Per_lvl   | 40(40)   | 40        | Predicted Cat1, Cat2, Text   | Cat3     | Predicted Cat1, Cat2, Text      | 0.953(0.001)    | 0.922(0.005)          |
+| dbpedia   | Per_label | 60       | 45        | Text divided per Target Cat2 | Cat3     | Text divided per Predicted Cat2 | 0.962(0.000)    | 0.957(0.000)          |
+
 
 ## predicted results with target target for comparisson
+In all cases as average of $3$ runs for $100$ Tokens
+
+| Type      | Epochs   | Batch size | Train Input **amazon**       | Output **amazon** | Test Input               | Cat1 accuracy   | Cat1 F1 score macro   |
+|:----------|:---------|:-----------|:-----------------------------|:--------------|:--------------------------------|:----------------|:----------------------|
+| Per_lvl   | 60(10)   | 45         | Text                         | Cat1          | Text                            | 0.828(0.002)    | 0.819(0.002)          |
+| ---       | ---      | ---        | ---                          | ---           | ---                             |**Cat2 accuracy**|**Cat2 F1 score macro**|
+| Per_lvl   | 60(53)   | 40         | Text                         | Cat2          | Text                            | 0.622(0.003)    | 0.393(0.004)          |
+| Per_lvl   | 60(60)   | 45         | Target Cat1, Text            | Cat2          | Target Cat1, Text               | 0.706(0.001)    | 0.464(0.004)          |
+| Per_lvl   | 60(60)   | 45         | Target Cat1, Text            | Cat2          | Predicted Cat1, Text            | 0.612(0.000)    | 0.400(0.002)          |
+| Per_lvl   | 60(60)   | 45         | Predicted Cat1, Text         | Cat2          | Predicted Cat1, Text            | 0.624(0.002)    | 0.398(0.002)          |
+| Per_label | 60       | 45         | Text divided per Target Cat1 | Cat2          | Text divided per Target Cat1    | 0.722(0.001)    | 0.567(0.004)          |
+| Per_label | 60       | 45         | Text divided per Target Cat1 | Cat2          | Text divided per Predicted Cat1 | 0.624(0.000)    | 0.474(0.005)          |
+|=======    |======    |========    |=====================         |============   |=======================          |===========      |=================      | 
+| ===       | ===      | ===        | Train Input **dbpedia**      | Output **dbpedia** | Test Input **dbpedia**     |**Cat1 accuracy**|**Cat1 F1 score macro**|
+| Per_lvl   | 20(20)   | 40         | Text                         | Cat1          | Text                            | 0.996(0.000)    | 0.994(0.000)          |
+| ---       | ---      | ---        | ---                          | ---           | ---                             |**Cat2 accuracy**|**Cat2 F1 score macro**|
+| Per_lvl   | 40(40)   | 40         | Text                         | Cat2          | Text                            | 0.975(0.000)    | 0.968(0.001)          |
+| Per_lvl   | 40(40)   | 40         | Target Cat1, Text            | Cat2          | Target Cat1, Text               | 0.979(0.000)    | 0.975(0.001)          |
+| Per_lvl   | 40(40)   | 40         | Target Cat1, Text            | Cat2          | Predicted Cat1, Text            | 0.976(0.000)    | 0.970(0.001)          |
+| Per_lvl   | 40(40)   | 40         | Predicted Cat1, Text         | Cat2          | Predicted Cat1, Text            | 0.976(0.000)    | 0.969(0.001)          |
+| Per_label | 60       | 45         | Text divided per Target Cat1 | Cat2          | Text divided per Target Cat1    | 0.980(0.000)    | 0.977(0.001)          |
+| Per_label | 60       | 45         | Text divided per Target Cat1 | Cat2          | Text divided per Predicted Cat1 | 0.977(0.000)    | 0.972(0.001)          |
+| ---       | ---      | ---        | ---                          | ---           | ---                             |**Cat3 accuracy**|**Cat3 F1 score macro**|
+| Per_lvl   | 40(40)   | 40         | Text                         | Cat3          | Text                            | 0.951(0.001)    | 0.918(0.007)          |
+| Per_lvl   | 40(40)   | 40         | Target Cat1, Cat2, Text      | Cat3          | Target Cat1, Cat2, Text         | 0.975(0.001)    | 0.954(0.003)          |
+| Per_lvl   | 40(40)   | 40         | Target Cat1, Cat2, Text      | Cat3          | Predicted Cat1, Cat2, Text      | 0.954(0.001)    | 0.931(0.003)          |
+| Per_lvl   | 40(40)   | 40         | Predicted Cat1, Cat2, Text   | Cat3          | Predicted Cat1, Cat2, Text      | 0.953(0.001)    | 0.922(0.005)          |
+| Per_label | 60       | 45         | Text divided per Target Cat2 | Cat3          | Text divided per Target Cat2    | 0.983(0.000)    | 0.982(0.000)          |
+| Per_label | 60       | 45         | Text divided per Target Cat2 | Cat3          | Text divided per Predicted Cat2 | 0.962(0.000)    | 0.957(0.000)          |
+
+
+
+
+
 
 | Type      | Dataset   | Epochs   | Tokens   | Batch size   | Runs   | Train Input                  | Output   | Test Input                      | Cat1 accuracy   | Cat1 F1 score macro   | Cat2 accuracy   | Cat2 F1 score macro   | Cat3 accuracy   | Cat3 F1 score macro   |
 |:----------|:----------|:---------|:---------|:-------------|:-------|:-----------------------------|:---------|:--------------------------------|:----------------|:----------------------|:----------------|:----------------------|:----------------|:----------------------|
 | Per_lvl   | amazon    | 60(10)   | 100      | 45           | 3      | Text                         | Cat1     | Text                            | 0.828(0.002)    | 0.819(0.002)          | -               | -                     | -               | -                     |
+| ---       | ---       | ---      | ---      | ---          | ---    | ---                          | ---      | ---                             | ---             | ---                   | ---             | ---                   | ---             | ---                   |
 | Per_lvl   | amazon    | 60(53)   | 100      | 40           | 3      | Text                         | Cat2     | Text                            | -               | -                     | 0.622(0.003)    | 0.393(0.004)          | -               | -                     |
 | Per_lvl   | amazon    | 60(60)   | 100      | 45           | 3      | Target Cat1, Text            | Cat2     | Target Cat1, Text               | -               | -                     | 0.706(0.001)    | 0.464(0.004)          | -               | -                     |
 | Per_lvl   | amazon    | 60(60)   | 100      | 45           | 3      | Target Cat1, Text            | Cat2     | Predicted Cat1, Text            | -               | -                     | 0.612(0.000)    | 0.400(0.002)          | -               | -                     |
 | Per_lvl   | amazon    | 60(60)   | 100      | 45           | 3      | Predicted Cat1, Text         | Cat2     | Predicted Cat1, Text            | -               | -                     | 0.624(0.002)    | 0.398(0.002)          | -               | -                     |
 | Per_label | amazon    | 60       | 100      | 45           | 3      | Text divided per Target Cat1 | Cat2     | Text divided per Target Cat1    | -               | -                     | 0.722(0.001)    | 0.567(0.004)          | -               | -                     |
 | Per_label | amazon    | 60       | 100      | 45           | 3      | Text divided per Target Cat1 | Cat2     | Text divided per Predicted Cat1 | -               | -                     | 0.624(0.000)    | 0.474(0.005)          | -               | -                     |
-| ---       | ---       | ---      | ---      | ---          | ---    | ---                          | ---      | ---                             | ---             | ---                   | ---             | ---                   | ---             | ---                   |
+| ===       | ===       | ===      | ===      | ===          | ===    | ===                          | ===      | ===                             | ===             | ===                   | ---             | ---                   | ---             | ---                   |
 | Per_lvl   | dbpedia   | 20(20)   | 100      | 40           | 3      | Text                         | Cat1     | Text                            | 0.996(0.000)    | 0.994(0.000)          | -               | -                     | -               | -                     |
+| ---       | ---       | ---      | ---      | ---          | ---    | ---                          | ---      | ---                             | ---             | ---                   | ---             | ---                   | ---             | ---                   |
 | Per_lvl   | dbpedia   | 40(40)   | 100      | 40           | 3      | Text                         | Cat2     | Text                            | -               | -                     | 0.975(0.000)    | 0.968(0.001)          | -               | -                     |
 | Per_lvl   | dbpedia   | 40(40)   | 100      | 40           | 3      | Target Cat1, Text            | Cat2     | Target Cat1, Text               | -               | -                     | 0.979(0.000)    | 0.975(0.001)          | -               | -                     |
 | Per_lvl   | dbpedia   | 40(40)   | 100      | 40           | 3      | Target Cat1, Text            | Cat2     | Predicted Cat1, Text            | -               | -                     | 0.976(0.000)    | 0.970(0.001)          | -               | -                     |
 | Per_lvl   | dbpedia   | 40(40)   | 100      | 40           | 3      | Predicted Cat1, Text         | Cat2     | Predicted Cat1, Text            | -               | -                     | 0.976(0.000)    | 0.969(0.001)          | -               | -                     |
 | Per_label | dbpedia   | 60       | 100      | 45           | 3      | Text divided per Target Cat1 | Cat2     | Text divided per Target Cat1    | -               | -                     | 0.980(0.000)    | 0.977(0.001)          | -               | -                     |
 | Per_label | dbpedia   | 60       | 100      | 45           | 3      | Text divided per Target Cat1 | Cat2     | Text divided per Predicted Cat1 | -               | -                     | 0.977(0.000)    | 0.972(0.001)          | -               | -                     |
+| ---       | ---       | ---      | ---      | ---          | ---    | ---                          | ---      | ---                             | ---             | ---                   | ---             | ---                   | ---             | ---                   |
 | Per_lvl   | dbpedia   | 40(40)   | 100      | 40           | 3      | Text                         | Cat3     | Text                            | -               | -                     | -               | -                     | 0.951(0.001)    | 0.918(0.007)          |
 | Per_lvl   | dbpedia   | 40(40)   | 100      | 40           | 3      | Target Cat1, Cat2, Text      | Cat3     | Target Cat1, Cat2, Text         | -               | -                     | -               | -                     | 0.975(0.001)    | 0.954(0.003)          |
 | Per_lvl   | dbpedia   | 40(40)   | 100      | 40           | 3      | Target Cat1, Cat2, Text      | Cat3     | Predicted Cat1, Cat2, Text      | -               | -                     | -               | -                     | 0.954(0.001)    | 0.931(0.003)          |

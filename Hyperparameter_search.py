@@ -8,6 +8,7 @@ from tensorboard.plugins.hparams import api as hp
 import numpy as np
 import sys
 
+# TODO add docstring
 
 def hyp_search_lvl1_flatt():
     HP_MAX_LENGTH = hp.HParam('max_length', hp.Discrete([64, 100, 256, 512]))

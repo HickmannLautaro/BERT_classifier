@@ -16,6 +16,7 @@ import yaml
 from BERT_per_label import train_per_label
 from BERT_per_lvl import run_experiment
 
+# TODO Add docstrings
 
 def main():
     print("Tensorflow version: ", tf.__version__)

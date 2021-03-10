@@ -27,6 +27,7 @@ import os
 import yaml
 import sys
 
+# TODO Add docstrings
 
 def plot_confusion_matrix(cm, f1_score, accuracy_score, class_names):
     """
