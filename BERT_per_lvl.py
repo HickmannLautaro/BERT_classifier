@@ -1,43 +1,32 @@
 #!/usr/bin/env python
 # coding: utf-8
-
-
-# -------- Load libraries ------- ###
-# Load Huggingface transformers
-from transformers import TFBertModel, BertConfig, BertTokenizerFast
-
-# Then what you need from tensorflow.keras
-from tensorflow.keras.layers import Input, Dropout, Dense
-from tensorflow.keras.models import Model
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.initializers import TruncatedNormal
-from tensorflow.keras.losses import CategoricalCrossentropy
-from tensorflow.keras.metrics import CategoricalAccuracy
-from tensorflow.keras.utils import to_categorical
-# And pandas for data import + sklearn because you always need sklearn
-import pandas as pd
-import tensorflow as tf
-import tensorflow_addons as tfa
-import matplotlib.pyplot as plt
-import numpy as np
-import sklearn
-import io
 import itertools
 import os
-import yaml
-import sys
 
-# TODO Add docstrings
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import sklearn
+import tensorflow as tf
+import tensorflow_addons as tfa
+from tensorflow.keras.initializers import TruncatedNormal
+from tensorflow.keras.layers import Input, Dropout, Dense
+from tensorflow.keras.losses import CategoricalCrossentropy
+from tensorflow.keras.metrics import CategoricalAccuracy
+from tensorflow.keras.models import Model
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.utils import to_categorical
+from transformers import TFBertModel, BertConfig, BertTokenizerFast
+
 
 def plot_confusion_matrix(cm, f1_score, accuracy_score, class_names):
     """
     Returns a matplotlib figure containing the plotted confusion matrix.
-    Args:
-        :param cm: (array, shape = [n, n]): a confusion matrix of integer classes
-        :param class_names: (array, shape = [n]): String names of the integer classes
-        :param accuracy_score: accuracy score for plotting
-        :param f1_score: f1_score score for plotting
-        :return figure
+    :param cm: (array, shape = [n, n]): a confusion matrix of integer classes
+    :param class_names: (array, shape = [n]): String names of the integer classes
+    :param accuracy_score: accuracy score for plotting
+    :param f1_score: f1_score score for plotting
+    :return figure
     """
     figure = plt.figure(figsize=(8, 8))
     plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
@@ -64,57 +53,54 @@ def plot_confusion_matrix(cm, f1_score, accuracy_score, class_names):
 
 def append_label(data, arguments):
     """
-
-    :param data:
-    :param arguments:
-    :return:
+    For the per level approach appends the textual category and the text
+    :param data: dataset to modify
+    :param arguments: arguments of the config file
+    :return: processed data used for training
     """
-    if arguments['labels'] is not None:
-        for arg in arguments['labels']:
-            if arg[0] == 'Target':
-                for cat in arg[1:][::-1]:
+    if arguments['labels'] is not None:  # for flatt no changes
+        for arg in arguments['labels']:  # For level 3 each category can have different append
+            if arg[0] == 'Target':  # Concatenate target labels and text
+                for cat in arg[1:][::-1]:  # Go in reverse order, i.e. Cat1.Cat2.Text
                     data['Text'] = data[cat].str.cat(data['Text'], sep=". ")
-                    # test['Text']=test[cat].str.cat(test['Text'],sep=". ")
-            else:
-                for cat in arg[::-1]:
-                    file = np.load(cat, allow_pickle=True)
+            else:  # For predicted labels
+                for cat in arg[::-1]:  # Go in reverse order, i.e. Cat1.Cat2.Text
+                    file = np.load(cat, allow_pickle=True)  # Load predicted labels from file
                     labels = file['train_class_names'][file['train_pred_raw'].argmax(axis=1)]
-                    # labels_test=file['test_class_names'][file['test_pred_raw'].argmax(axis=1)]
-
-                    data['aux'] = labels
+                    data['aux'] = labels  # add column to pandas dataframe to concatenate
                     data['Text'] = data['aux'].str.cat(data['Text'], sep=". ")
-
-                    # test['aux']=labels_test
-                    # test['Text']=test['aux'].str.cat(test['Text'],sep=". ")
-
     return data
 
 
 def append_test_label(test, arguments):
     """
-
-    :param test:
-    :param arguments:
-    :return:
-    """
-
-    if arguments['test_labels'] is not None:
-        for arg in arguments['test_labels']:
-            if arg[0] == 'Target':
-                for cat in arg[1:][::-1]:
+   For the per level approach appends the textual category and the text
+   :param test: dataset to modify
+   :param arguments: arguments of the config file
+   :return: processed data used for testing
+   """
+    if arguments['test_labels'] is not None:  # for flatt no changes
+        for arg in arguments['test_labels']:  # For level 3 each category can have different append
+            if arg[0] == 'Target':  # Concatenate target labels and text
+                for cat in arg[1:][::-1]:  # Go in reverse order, i.e. Cat1.Cat2.Text
                     test['Text'] = test[cat].str.cat(test['Text'], sep=". ")
-                    # test['Text']=test[cat].str.cat(test['Text'],sep=". ")
-            else:
-                for cat in arg[::-1]:
-                    file = np.load(cat, allow_pickle=True)
+            else:  # For predicted labels
+                for cat in arg[::-1]:  # Go in reverse order, i.e. Cat1.Cat2.Text
+                    file = np.load(cat, allow_pickle=True)  # Load predicted labels from file
                     labels_test = file['test_class_names'][file['test_pred_raw'].argmax(axis=1)]
-                    test['aux'] = labels_test
+                    test['aux'] = labels_test  # add column to pandas dataframe to concatenate
                     test['Text'] = test['aux'].str.cat(test['Text'], sep=". ")
-
     return test
 
 
-def get_data(arguments,hyp_search=False):
+def get_data(arguments, hyp_search=False):
+    """
+    loads the dataset and preprocesses it
+    :param arguments: arguments of the config file
+    :param hyp_search: boolean to determine if training or hyperparameter search
+    :return: train data, train_class_names and train_target
+    """
+    # Read arguments from config file
     lvl = arguments['lvl']
     data_path = arguments['data_path']
 
@@ -127,7 +113,6 @@ def get_data(arguments,hyp_search=False):
 
     # Select target columns
     cat_num = str('Cat' + str(lvl))
-
     data = data[['Text', cat_num]]
     data = data.sample(frac=1)
 
@@ -135,7 +120,7 @@ def get_data(arguments,hyp_search=False):
     # Set model output as categorical and save in new label col
     cat_label = str(cat_num + '_label')
     data[cat_label] = pd.Categorical(data[cat_num])
-    # Transform your output to numeric
+    # Transform output to numeric
     data[cat_num] = data[cat_label].cat.codes
 
     train_class_names = np.unique(data[cat_label])
@@ -150,6 +135,12 @@ def get_data(arguments,hyp_search=False):
 
 
 def get_test_data(arguments):
+    """
+   loads the dataset and preprocesses it
+   :param arguments: arguments of the config file
+   :return: test data, test_class_names and test_target
+   """
+    # Read arguments from config file
     lvl = arguments['lvl']
     data_path = arguments['data_path']
 
@@ -162,48 +153,50 @@ def get_test_data(arguments):
 
     # Select target columns
     cat_num = str('Cat' + str(lvl))
-
     test = test[['Text', cat_num]]
 
     # Setup test data for logging
     cat_label = str(cat_num + '_label')
     # Set model output as categorical and save in new label col
     test[cat_label] = pd.Categorical(test[cat_num])
-    # Transform your output to numeric
+    # Transform output to numeric
     test[cat_num] = test[cat_label].cat.codes
-
     test_class_names = np.unique(test[cat_label])
-
     test_target = test[cat_num]
 
     return test, test_class_names, test_target
 
 
 def get_bert_model(model_name, config, max_length, class_names, hyp_search):
+    """
+    Gets the compiled BERT calssification model
+    :param model_name: name of the pre-trained model to load 
+    :param config: BERT configuration loaded from pre-trained model
+    :param max_length: maximal input token length
+    :param class_names: target class names
+    :param hyp_search: boolean to determine if training model or hyperparameter search
+    :return: compiled BERT classifier
+    """""
+
     # Load the Transformers BERT model
     transformer_model = TFBertModel.from_pretrained(model_name, config=config)
 
-    # ------- Build the model ------- ###
-
+    # ------- Build the model -------
     # TF Keras documentation: https://www.tensorflow.org/api_docs/python/tf/keras/Model
-
     # Load the MainLayer
     bert = transformer_model.layers[0]
-
-    # Build your model input
+    # Build the model input
     input_ids = Input(shape=(max_length,), name='input_ids', dtype='int32')
-    attention_mask = Input(shape=(max_length,), name='attention_mask',
-                           dtype='int32')  # Ignores padded part of sentences
+    attention_mask = Input(shape=(max_length,), name='attention_mask', dtype='int32')  # Ignores padded part of sentences
     inputs = {'input_ids': input_ids, 'attention_mask': attention_mask}
 
     # Load the Transformers BERT model as a layer in a Keras model
     bert_model = bert(inputs)[1]
-    dropout = Dropout(config.hidden_dropout_prob, name='pooled_output')
+    dropout = Dropout(config.hidden_dropout_prob, name='pooled_output')  # extract the [CLS] vector of the last hidden layer https://huggingface.co/transformers/_modules/transformers/models/bert/modeling_tf_bert.html#TFBertForSequenceClassification
     pooled_output = dropout(bert_model, training=False)
 
-    # Then build your model output
-    output = Dense(units=len(class_names),
-                   kernel_initializer=TruncatedNormal(stddev=config.initializer_range), name='Cat')(pooled_output)
+    # Add classifier head
+    output = Dense(units=len(class_names), kernel_initializer=TruncatedNormal(stddev=config.initializer_range), name='Cat')(pooled_output)
 
     # And combine it all in a model object
     model = Model(inputs=inputs, outputs=output, name='BERT_MultiClass')
@@ -214,7 +207,7 @@ def get_bert_model(model_name, config, max_length, class_names, hyp_search):
 
     # ------- Setup training ------- ###
 
-    # Set an optimizer
+    # Set the optimizer
     optimizer = Adam(
         learning_rate=5e-05,
         epsilon=1e-08,
@@ -234,13 +227,18 @@ def get_bert_model(model_name, config, max_length, class_names, hyp_search):
 
 
 def get_tokenized(model_name, config, data, max_length):
-    # Load BERT tokenizer
-
+    """
+    Tokenizes input
+    :param model_name: name of the pre-trained model to load
+    :param config: BERT configuration loaded from pre-trained model
+    :param data: trainings or test data to tokenize
+    :param max_length: maximal input token length
+    :return: tokenized data and attention mask
+    """
     # Load BERT tokenizer
     tokenizer = BertTokenizerFast.from_pretrained(pretrained_model_name_or_path=model_name, config=config)
 
-    # Tokenize the input (takes some time) for training and test (for logging) data
-
+    # Tokenize the input (takes some time) for training
     x = tokenizer(
         text=data['Text'].to_list(),
         add_special_tokens=True,
@@ -255,6 +253,13 @@ def get_tokenized(model_name, config, data, max_length):
 
 
 def run_experiment(arguments, hyp_search=False):
+    """
+    Function to train a classier on the flat and per_level aqpproaches
+    :param arguments: config file
+    :param hyp_search: boolean to indicate if hyperparameter search or training
+    :return: saves to file the trained model and saved rep_and_histo file with training metrics and history; and for hyperparameter saves only the history and a report (no model is saved) but it also retuns f1_score and accuracy_score
+    """
+
     if not hyp_search:
         print("#" * 150)
         print("#" * 150)
@@ -271,25 +276,18 @@ def run_experiment(arguments, hyp_search=False):
     lable_type = arguments['lable_type']
     test_labels_type = arguments['test_labels_type']
     data_path = arguments['data_path']
+
     # --------- Setup logs paths ----------
 
-
-
-    if hyp_search:
+    if hyp_search:  # Different paths for hyp-search and saved models
         path = "/" + model_name + "/" + data_path + "/lvl" + str(
-            lvl) + "/trained_" + hierar + "_" + lable_type + "/tested_" + test_labels_type+ "/" + str(
-            max_length) + "T_" + str(
-            epochs) + "e_" + str(batch_size) + "b/"
+            lvl) + "/trained_" + hierar + "_" + lable_type + "/tested_" + test_labels_type + "/" + str(max_length) + "T_" + str(epochs) + "e_" + str(batch_size) + "b/"
         aux_path = os.getcwd() + "/hyperparameters_search" + path
     else:
-
-        path = "/" + model_name + "/" + data_path + "/lvl" + str(
-            lvl) + "/trained_" + hierar + "_" + lable_type + "/" + str(
-            max_length) + "T_" + str(
-            epochs) + "e_" + str(batch_size) + "b/"
-
+        path = "/" + model_name + "/" + data_path + "/lvl" + str(lvl) + "/trained_" + hierar + "_" + lable_type + "/" + str(max_length) + "T_" + str(epochs) + "e_" + str(batch_size) + "b/"
         aux_path = os.getcwd() + "/saved_models" + path
 
+    # Create folders
     try:
         os.makedirs(aux_path)
     except OSError:
@@ -344,39 +342,35 @@ def run_experiment(arguments, hyp_search=False):
           "\n \nPlots dir:" + path_model_plot +
           "\n \nSaved data dir:" + path_saved_data)
 
-
-    ### --------- Import data --------- ###
+    # --------- Import data ---------
 
     data, train_class_names, target = get_data(arguments, hyp_search)
 
-    ### --------- Load BERT ---------- ###
+    # --------- Load BERT ----------
 
     # Load transformers config and set output_hidden_states to False
     config = BertConfig.from_pretrained(model_name)
     config.output_hidden_states = False
 
     # Load the Transformers BERT model
-
     model = get_bert_model(model_name, config, max_length, train_class_names, hyp_search)
 
-    # Tokenize the input (takes some time) for training and test (for logging) data	
-
+    # Tokenize the input (takes some time) for training and test (for logging) data
     x = get_tokenized(model_name, config, data, max_length)
 
-    ### ------- Callbacks ------- ###
+    # ------- Callbacks -------
     # Tensorboard callback
-
-    if hyp_search:
+    if hyp_search:  # Different configurations for hyp-search and training
         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir, write_graph=False)
-        delta=0.0005
+        delta = 0.0005
     else:
-        tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir, histogram_freq=1, write_graph=False,
-                                                              write_images=True, profile_batch='10,20')
+        tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir, histogram_freq=1, write_graph=False, write_images=True, profile_batch='10,20')
         delta = 0.0001
-    earlystopping = tf.keras.callbacks.EarlyStopping(monitor='val_f1_score', verbose=1, mode="max",patience=4,
-                                                     restore_best_weights=True, min_delta=delta)
-    ### ------- Train the model ------- ###
 
+    # Early stopping
+    earlystopping = tf.keras.callbacks.EarlyStopping(monitor='val_f1_score', verbose=1, mode="max", patience=4,
+                                                     restore_best_weights=True, min_delta=delta)
+    # ------- Train the model -------
 
     # Fit the model
     history = model.fit(
@@ -388,7 +382,7 @@ def run_experiment(arguments, hyp_search=False):
         callbacks=[tensorboard_callback, earlystopping])
 
     # Load the best weights and save the model
-    if not hyp_search:
+    if not hyp_search:  # Only save models for training
         model.save(path_save_model)
 
     tf.keras.utils.plot_model(
@@ -404,23 +398,23 @@ def run_experiment(arguments, hyp_search=False):
     print("Run finished: " + path)
     test, test_class_names, test_target = get_test_data(arguments)
     # ----- Evaluate the model ------
+    # Get test data
     test_x = get_tokenized(model_name, config, test, max_length)
-
-    test_pred_raw = model.predict(x={'input_ids': test_x['input_ids'], 'attention_mask': test_x['attention_mask']},
-                                  verbose=1)
-
-
+    # Get predictions as probability vectors
+    test_pred_raw = model.predict(x={'input_ids': test_x['input_ids'], 'attention_mask': test_x['attention_mask']}, verbose=1)
+    # Convert probability to class number
     test_pred = np.argmax(test_pred_raw, axis=1)
+
     # Calculate the confusion matrix.
     cm = sklearn.metrics.confusion_matrix(test_target, test_pred)
     cm[np.around(cm.astype('float') / cm.sum(axis=1)[:, np.newaxis], decimals=2) < 0.05] = 0
 
+    # Calculate test F1 macro score and accuracy
     f1_score = sklearn.metrics.f1_score(test_target, test_pred, average='macro')
     accuracy_score = sklearn.metrics.accuracy_score(test_target, test_pred)
 
-
+    # Save confussion matrix to file
     path_confusion_mat = path_saved_data + '/conf.png'
-
     figure = plot_confusion_matrix(cm, f1_score, accuracy_score, class_names=test_class_names)
     figure.savefig(path_confusion_mat)
     plt.close(figure)
@@ -428,39 +422,10 @@ def run_experiment(arguments, hyp_search=False):
     # noinspection PyTypeChecker
     report = sklearn.metrics.classification_report(test_target, test_pred, target_names=test_class_names, digits=4)
 
-
-
     if hyp_search:
-
-        np.savez(path_saved_data+ "/rep_and_histo.npz" , report=report, hist=history.history)
-
+        np.savez(path_saved_data + "/rep_and_histo.npz", report=report, hist=history.history)
         return f1_score, accuracy_score
     else:
         train_pred_raw = model.predict(x={'input_ids': x['input_ids'], 'attention_mask': x['attention_mask']}, verbose=1)
 
-        np.savez( path_saved_data+  "/rep_and_histo.npz", test_pred_raw=test_pred_raw, f1_score=f1_score, accuracy_score=accuracy_score,
-                 train_pred_raw=train_pred_raw, report=report, hist=history.history, train_class_names=train_class_names, test_class_names=test_class_names)
-
-def main():
-    print("Tensorflow version: ", tf.__version__)
-
-    # rtx 3080 tf 2.4.0-rc4 bug
-    gpu_devices = tf.config.experimental.list_physical_devices('GPU')
-    tf.config.experimental.set_memory_growth(gpu_devices[0], True)
-    os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
-    list_args = sys.argv[1:]
-
-    if len(list_args) < 1:
-        print("Config missing")
-        sys.exit(2)
-
-    for conf in list_args:
-        with open(conf) as f:
-            arguments = yaml.load(f, Loader=yaml.FullLoader)
-        for i in range(arguments['repetitions']):
-            run_experiment(arguments)
-
-
-if __name__ == "__main__":
-    main()
+        np.savez(path_saved_data + "/rep_and_histo.npz", test_pred_raw=test_pred_raw, f1_score=f1_score, accuracy_score=accuracy_score, train_pred_raw=train_pred_raw, report=report, hist=history.history, train_class_names=train_class_names, test_class_names=test_class_names)

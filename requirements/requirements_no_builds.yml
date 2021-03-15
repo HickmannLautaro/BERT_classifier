@@ -158,6 +158,8 @@ dependencies:
   - zipp=3.4.0
   - zlib=1.2.11
   - zstd=1.4.5
+  - tqdm=4.59.0
+
   - pip:
     - absl-py==0.10.0
     - dill==0.3.3
