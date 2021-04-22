@@ -1,4 +1,4 @@
-# BERT for hierarchicla text classification on a dataset with Amazon product reviews and on DBpedia
+# BERT for hierarchicla text classification on Amazon product reviews and DBpedia
 Multiple hierearchical text classification approaches using the pretrained bert-base-uncased model form [Hugging Face](https://huggingface.co/bert-base-uncased). On the [amazon reviews dataset](https://www.kaggle.com/kashnitsky/hierarchical-text-classification)  
 and [DBpedia](https://www.kaggle.com/danofer/dbpedia-classes?select=DBPEDIA_train.csv) datasets.  
 
