@@ -256,7 +256,7 @@ Amount of appearances for Cat3:
  * Maximal: AcademicJournal appears 485 times  
  * in average 277.60 times.
 ---
-#Sources 
+# Sources 
 [Based on](https://towardsdatascience.com/multi-label-multi-class-text-classification-with-bert-transformer-and-keras-c6355eccb63a)  
 [Pretrained models](https://huggingface.co/transformers/pretrained_models.html)  
 [BERT docu](https://huggingface.co/transformers/model_doc/bert.html)  
