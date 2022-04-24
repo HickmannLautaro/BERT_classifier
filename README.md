@@ -59,7 +59,7 @@ lvl: 2 # Hierarchical lvl
 # And combinations of both. The order will be label1. label2. Text where for label1 it adds all. e.g. label1: [lb1, lb2] then lb1. lb2. label2. Text.
 labels: [['Target','Cat1']]  #Examplkes of target labels
 # Same as labels but this are used for prediction, i.e. should not be target only predicted labels
-test_labels: [['saved_models/bert-base-uncased/amazon/lvl1/trained_flatt__/100T_60e_45b/Run3/tested__/rep_and_histo.npz']]  #Examplkes of predicted labels
+test_labels: [['saved_models/bert-base-uncased/amazon/lvl1/trained_flatt__/100T_60e_45b/Run3/tested__/rep_and_histo.npz']]  #Examples of predicted labels
 hierar: hierarchical #Denotes if it is a hierarchical or flat aproach
 lable_type: Target # What kind of labels for training can be: _(flat) ,Target, Predicted or per_label
 test_labels_type: Predicted # What kind of labels shoud be used for testing, can be: _(flat) ,Target, Predicted
@@ -72,11 +72,6 @@ Run `Hyperparameter_search.py` to do a grid-search over the predifined hyperpara
 For example `python Hyperparameter_search.py Flat_lvl2 tgt_tgt pred_pred saved_models/bert-base-uncased/amazon/lvl1/trained_flatt__/100T_60e_45b/Run3/tested__/rep_and_histo.npz`
 
 For data analysis of the datasets see the `Data_analisis.ipynb` notebook and for a result generation and comparison see the `Result_table_generator.ipynb` notebook.
-
-A selection of trained models can be downloaded from [Google Drvie])(https://drive.google.com/drive/folders/1G6O1dA5eqEJKgMOYelBAb0chpVXo7Pq_?usp=sharing)
-
-Add the "saved_models" folder to the root of this project, i.e. here to be able to use it without changing paths.
-
 
 
 
